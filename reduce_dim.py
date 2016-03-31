@@ -6,7 +6,7 @@ from scipy.linalg import eigh
 class LDA:
     
     def __init__(self):
-        self.W
+        self.W_LDA
         self.mean_train = None
     
     def fit(self, X_train, y_train, reduced_dim):
@@ -32,10 +32,10 @@ class LDA:
             S_b += x[k].shape[0] * (mean_k - mean_train).dot((mean_k - mean_train).T)            
             
         eigh_values, eigh_vectors = eigh(np.linalg.solve(S_w, S_b))
-        self.W = np.take(eigh_vectors, range(D-reduced_dim, D)
+        self.W_LDA = np.take(eigh_vectors.T, range(D-reduced_dim, D), axis=0)
         
     def transform(self, X):
-        pass #type your code here
+            return X.dot(self.W_LDA.T)
 
 class PCA:
     
