@@ -6,7 +6,7 @@ from scipy.linalg import eigh
 class LDA:
     
     def __init__(self):
-        self.W_LDA
+        self.W_LDA = None
         self.mean_train = None
     
     def fit(self, X_train, y_train, reduced_dim):
@@ -22,25 +22,34 @@ class LDA:
         K = max(y_train) + 1
         N, D = X_train.shape
         S_w = np.zeros((D,D))
+        S_b = np.zeros((D,D))
         for k in [0,K]:
-            X[k] = [X_train[i] for i in range (0,N) if y_train[i]==k]
-            mean_k = np.mean(X[k], axis=0)                
+            X_k = [X_train[i] for i in range (0,N) if y_train[i]==k]
+            mean_k = np.mean(X_k, axis=0)                
             
-            S[k] = np.cov(X[k], rowvar=0, bias=1) * X[k].shape[0]
-            S_w += s[k]
+            S_w += np.cov(X_k, rowvar=0, bias=1) * X_k.shape[0]
             
-            S_b += x[k].shape[0] * (mean_k - mean_train).dot((mean_k - mean_train).T)            
+            S_b += X_k.shape[0] * (mean_k - self.mean_train).dot((mean_k - self.mean_train).T)            
             
         eigh_values, eigh_vectors = eigh(np.linalg.solve(S_w, S_b))
         self.W_LDA = np.take(eigh_vectors.T, range(D-reduced_dim, D), axis=0)
         
     def transform(self, X):
-            return X.dot(self.W_LDA.T)
-
+        return (X-self.mean_train).dot(self.W_LDA.T)
+            
 class PCA:
-    
-    def fit(self, X_train, reduced_dim):
-        pass #type your code here
 
+    def __init__(self):
+        self.W_PCA = None
+        self.mean_train = None   
+    
+    def fit(self, X_train, reduced_dim):        
+        N, D = X_train.shape
+        self.mean_train = np.mean(X_train, axis=0)                
+        
+        S_t = np.cov(X_train, rowvar=0, bias=1)
+        eigh_values, eigh_vectors = eigh(S_t)
+        self.W_PCA = np.take(eigh_vectors.T, range(D-reduced_dim, D), axis=0)        
+            
     def transform(self, X):
-        pass #type your code here
+        return (X-self.mean_train).dot(self.W_PCA.T)
