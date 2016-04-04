@@ -24,7 +24,9 @@ class LDA:
             
             S_w += np.cov(X_k, rowvar=0, bias=1) * X_k.shape[0]
             
-            S_b += X_k.shape[0] * (mean_k - self.mean_train).dot((mean_k - self.mean_train).T)            
+            aux = X_k.shape[0] * np.outer((mean_k - self.mean_train.T),(mean_k - self.mean_train))
+            #print "Sb_k ",aux
+            S_b += aux            
             
         eigh_values, eigh_vectors = eigh(np.linalg.solve(S_w, S_b))
         self.W_LDA = np.take(eigh_vectors.T, range(D-reduced_dim, D), axis=0)
@@ -51,3 +53,4 @@ class PCA:
             
     def transform(self, X):
         return (X-self.mean_train).dot(self.W_PCA.T)
+        
