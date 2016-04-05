@@ -37,25 +37,26 @@ class LDA:
             #print "Sb_k ",aux
             S_b += aux            
             
-        #aux3 = np.linalg.solve(S_w, S_b)
-        #aux4 = np.linalg.inv(S_w) * S_b
         #print "Sw, Sb"
         #print S_w
         #print S_b
         #print "matriz nada",
         eigh_values, eigh_vectors = eigh(S_b, S_w) #aux4
-        #print "autoval ", eigh_values
-        #print "autovec ", eigh_vectors
+        #eigh_vectors = (eigh_vectors.T)[::-1]
+        aux1 = eigh_vectors[:, range(D-1, D-reduced_dim-1, -1)]
+        #aux1 = np.take(eigh_vectors, range(reduced_dim), axis=0)  
+        
+        
         aux2 = np.take(eigh_vectors.T, range(D-1, D-reduced_dim-1, -1), axis=0)
         aux22 = np.take(eigh_vectors.T, range(D-reduced_dim,D), axis=0)
         #print "sol: ", aux2 , aux22
-        self.W_LDA = aux22
+        self.W_LDA = aux1
         
     def transform(self, X):
         #print "X ", X
         #print "mean_t ", self.mean_train
         #print "W ", self.W_LDA
-        return (X - self.mean_train).dot(self.W_LDA.T)
+        return (X - self.mean_train).dot(self.W_LDA)
             
 class PCA:
 
