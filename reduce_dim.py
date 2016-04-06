@@ -8,19 +8,22 @@ class LDA:
     def __init__(self):
         self.W_LDA = None
         self.mean_train = None
+        self.rd = None
     
     def fit(self, X_train, y_train, reduced_dim):
     
         self.mean_train = np.mean(X_train, axis=0)                
         
-        K = max(y_train) + 1
+        K = np.unique(y_train)#max(y_train) + 1
         N, D = X_train.shape
         
         # S within
         S_w = np.zeros((D,D))
-        for k in range(K):
+        for k in K:
             #print "clase --------------------------------------------", k
-            X_k = np.asarray([X_train[i] for i in range(0,N) if y_train[i]==k])
+            X_k = X_train[y_train == k, :]
+            
+            #i] for i in range(N) if y_train[i]==k])
             N_k = X_k.shape[0]
             
             S_w += np.cov(X_k, rowvar=0, bias=1) * N_k
@@ -37,14 +40,18 @@ class LDA:
         
         
         self.W_LDA = aux1.T
-
+        self.rd = reduced_dim
         
     def transform(self, X):
         #print "X ", X
         #print "mean_t ", self.mean_train
         #print "W ", self.W_LDA
         sol1 = (X - self.mean_train).dot(self.W_LDA)
-        return sol1
+        print "lasformas"
+        print sol1.shape
+        print X.shape[0], self.rd
+        sol1 = np.asarray(sol1)
+        return np.asarray(sol1)#sol1 #np.zeros((X.shape[0],self.rd))
             
 class PCA:
 
