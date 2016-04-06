@@ -9,7 +9,6 @@ class LDA:
     def __init__(self):
         self.W_LDA = None
         self.mean_train = None
-        self.rd = None
 
     def fit(self, X_train, y_train, reduced_dim):
 
@@ -41,7 +40,6 @@ class LDA:
 
 
         self.W_LDA = aux1.T
-        self.rd = reduced_dim
 
     def transform(self, X):
         #print "X ", X
@@ -59,7 +57,6 @@ class PCA:
     def __init__(self):
         self.W_PCA = None
         self.mean_train = None
-        self.rd = None
 
     def fit(self, X_train, reduced_dim):
         N, D = X_train.shape
@@ -67,13 +64,10 @@ class PCA:
 
         S_t = np.cov(X_train, rowvar=0, bias=1) #* N
         #eigh_values, eigh_vectors = eigh(S_t)
-        #self.W_PCA = np.take(eigh_vectors.T, range(D-reduced_dim, D), axis=0)
         eigh_vectors = eigh(S_t, eigvals=(D-reduced_dim, D-1))[1]
         aux1 = (eigh_vectors.T)[::-1]
         self.W_PCA = aux1.T
 
-        self.rd = reduced_dim
-
     def transform(self, X):
         a = (X-self.mean_train).dot(self.W_PCA)
-        return a# np.zeros((X.shape[0],self.rd))
+        return np.asarray(a)# np.zeros((X.shape[0],self.rd))
