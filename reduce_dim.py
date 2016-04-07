@@ -61,7 +61,7 @@ class LDA:
         >>> X_train = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
         >>> y_train = np.array([1, 1, 1, 2, 2, 2])
         >>> L = LDA()
-        >>> L.fit(X_train, y_train, 2)
+        >>> L.fit(X_train, y_train, 1)
         >>> L.W_LDA
         array([[  5.55111512e-17],
                [  8.66025404e-01]])
@@ -113,7 +113,7 @@ class LDA:
         >>> X_train = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
         >>> y_train = np.array([1, 1, 1, 2, 2, 2])
         >>> L = LDA()
-        >>> L.fit(X_train, y_train, 2)
+        >>> L.fit(X_train, y_train, 1)
         >>> X_red = L.transform([[3, 0], [2, -3], [-2, -4]])
         >>> X_red
         array([[  1.66533454e-16],
