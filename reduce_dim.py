@@ -129,7 +129,7 @@ class LDA:
 
 class PCA:
     """
-    Implements dimensionality reduction using pricipal component analysis.
+    Implements dimensionality reduction using principal component analysis.
 
     Notes
     -----
