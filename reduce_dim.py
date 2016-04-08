@@ -164,7 +164,7 @@ class PCA:
         ----------
         X_train :
             array of dimension (N,D) which contains
-            N points with known classes.
+            N points.
         reduced_dim :
             integer number (less than number of classes and D)
             used for dimension reduction.
