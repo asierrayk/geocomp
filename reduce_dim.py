@@ -86,18 +86,10 @@ class LDA:
         S_t = np.cov(X_train, rowvar=0, bias=1) * N
         S_b = S_t - S_w
 
-<<<<<<< HEAD
-        eigh_vectors = eigh(S_b, S_w, eigvals=(D-reduced_dim, D-1))[1]
-        aux1 = (eigh_vectors.T)[::-1]
-
-
-        self.W_LDA = aux1.T
-=======
         # Select eigenvectors whose eigenvals are the reduced_dim greatest
         eigh_vectors = eigh(S_b, S_w, eigvals=(D - reduced_dim, D - 1))[1]
         w = (eigh_vectors.T)[::-1]  # descending order
         self.W_LDA = w.T
->>>>>>> master
 
     def transform(self, X):
         """
@@ -193,17 +185,6 @@ class PCA:
         N, D = X_train.shape
         self.mean_train = np.mean(X_train, axis=0)
 
-<<<<<<< HEAD
-        S_t = np.cov(X_train, rowvar=0, bias=1) #* N
-        #eigh_values, eigh_vectors = eigh(S_t)
-        eigh_vectors = eigh(S_t, eigvals=(D-reduced_dim, D-1))[1]
-        aux1 = (eigh_vectors.T)[::-1]
-        self.W_PCA = aux1.T
-
-    def transform(self, X):
-        a = (X-self.mean_train).dot(self.W_PCA)
-        return np.asarray(a)# np.zeros((X.shape[0],self.rd))
-=======
         S_t = np.cov(X_train, rowvar=0, bias=1)
         eigh_vectors = eigh(S_t, eigvals=(D - reduced_dim, D - 1))[1]
         w = (eigh_vectors.T)[::-1]
@@ -245,4 +226,3 @@ class PCA:
         """
         X_red = (X - self.mean_train).dot(self.W_PCA)
         return X_red
->>>>>>> master
