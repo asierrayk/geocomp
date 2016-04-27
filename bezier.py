@@ -31,32 +31,33 @@ def polyeval_bezier(P, num_points, algorithm):
         pass
     elif algorithm == "horner":
         # método de Horner, dividiendo los valores en dos trozos: los menores que 0.5 y los mayores o iguales a 0.5
-        _horner(P, t, num_points)
+        return _horner(P, num_points)
     elif algorithm == "deCasteljau":
         # evaluará la curva usando el algoritmo de De Casteljau
         _deCasteljau(P, t)
 
-def _deCasteljau(P, t):
-    n = P.shape[0] - 1 #comprobar valor
-    bezier = np.zeros(len(t))
-    for j in range(len(t)):
-        b = np.copy(P)
-        for k in range(1, n+1):
-            for i in range(n+1-k): # Calculamos b[i] = (b_i)^k
-                b[i] = (1-t[j])*b[i]+ t[j]*b[i+1]
-        bezier[j] = b[0]
-    return bezier
+def _deCasteljau(P, num_points): 
+    t = np.linspace(0,1,num_points)
+    return [_deCasteljau2(P.astype(float), t[i]) for i in range(num_points)]
+    
+def _deCasteljau2(b, t):
+    n = b.shape[0] - 1
+    b = np.copy(P)
+    for k in range(1, n+1):
+        for i in range(n+1-k): # Calculamos b[i] = (b_i)^k
+            b[i] = (1-t)*b[i] + t*b[i+1]
+    return b[0]    
 
-def _horner(P, t, num_points):
+def _horner(P, num_points):
     n = P.shape[0] - 1
     t = np.linspace(0,1,num_points)
     
     t_0 = t[:num_points/2]
     t_0 = t_0/(1-t_0)
     t_0 = t_0[:,np.newaxis]
-    pol_0 = [P[i] * comb(n,i) for i in range(n)]
+    pol_0 = [P[i] * comb(n,i) for i in range(n+1)]
 
-    bezier_0 = (1-t_0)**n * np.polyval(pol_0, t_0[:,np.newaxis])
+    bezier_0 = (1-t_0)**n * np.polyval(pol_0, t_0)
 
     t_1 = t[num_points/2:]
     t_1 = (1-t_1)/t_1
