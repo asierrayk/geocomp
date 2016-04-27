@@ -24,8 +24,7 @@ def polyeval_bezier(P, num_points, algorithm):
     '''
     grid = np.linspace(0,1,num_points)
     if algorithm == "direct":
-        # evaluación directa de los polinomios de Bernstein
-        pass
+        return _direct(P,num_points)
     elif algorithm == "recursive":
         # los polinomios de Bernstein se calculen usando la fórmula recursiva que los caracteriza
         pass
@@ -38,9 +37,9 @@ def polyeval_bezier(P, num_points, algorithm):
 
 def _deCasteljau(P, num_points): 
     t = np.linspace(0,1,num_points)
-    return [_deCasteljau2(P.astype(float), t[i]) for i in range(num_points)]
+    return [_deCasteljau_aux(P.astype(float), t[i]) for i in range(num_points)]
     
-def _deCasteljau2(b, t):
+def _deCasteljau_aux(b, t):
     n = b.shape[0] - 1
     b = np.copy(P)
     for k in range(1, n+1):
@@ -67,6 +66,16 @@ def _horner(P, num_points):
     bezier_1 = t_1**n * np.polyval(pol_1, t_1)
 
     return np.concatenate((bezier_0, bezier_1))
+    
+def _direct(P, num_points):
+    return  [_direct_aux(P, t) for t in np.linspace(0,1,num_points)]
+    
+def _direct_aux(P, t):
+    n = P.shape[0] - 1
+    bezier = 0
+    for i in range(n+1):
+        bezier += P[i] * comb(n,i) * t**i * (1-t)**(n-i)
+    return bezier
 
 def bezier_subdivision(P, k, epsilon, lines=False):
     '''
