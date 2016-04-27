@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import division
 import numpy as np
 
@@ -27,7 +28,7 @@ def polyeval_bezier(P, num_points, algorithm):
     if algorithm == "direct":
         # evaluación directa de los polinomios de Bernstein
         pass
-    elif algorithm == "recursive"
+    elif algorithm == "recursive":
         # los polinomios de Bernstein se calculen usando la fórmula recursiva que los caracteriza
         pass
     elif algorithm == "horner":
@@ -49,20 +50,22 @@ def _deCasteljau(P, t):
     return bezier
 
 def _horner(P, t, num_points):
-    n = P.shape[0]
+    n = P.shape[0] - 1
     t = np.linspace(0,1,num_points)
-    t_0 = t[:len(t)/2]
+    
+    t_0 = t[:num_points/2]
     t_0 = t_0/(1-t_0)
-    t_1 = t[len(t)/2:]
-    pol_0 = [P[i] * comb(n,i) for i in range(n+1/2)]
+    pol_0 = [P[i] * comb(n,i) for i in range(n)]
 
-    bezier_0 = np.polyval(pol_0, t_0)
+    bezier_0 = (1-t_0)**n * np.polyval(pol_0, t_0)
 
-    pol_1 = [P[n-i] * comb(n,i) for i in range(n+1/2)]
+    t_1 = t[num_points/2:]
+    t_1 = (1-t_1)/t_1
+    pol_1 = [P[n-i] * comb(n,i) for i in range(n)]
 
-    bezier_1 = np.polyval(P, t_1)
+    bezier_1 = t_1**n * np.polyval(pol_1, t_1)
 
-    bezier = np.concatenate((bezier_0, bezier_1))
+    return np.concatenate((bezier_0, bezier_1))
 
 def bezier_subdivision(P, k, epsilon, lines=False):
     '''
@@ -112,4 +115,4 @@ def comb(n, i):
     if (n, i) in BINOMIAL_DICT:
         return BINOMIAL_DICT[n,i]
     BINOMIAL_DICT[n, i] = comb(n-1, i-1) + comb(n - 1, i)
-    return BINOMIAL_DICT[n
+    return BINOMIAL_DICT[n,i]
