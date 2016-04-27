@@ -77,6 +77,17 @@ def _direct_aux(P, t):
         bezier += P[i] * comb(n,i) * t**i * (1-t)**(n-i)
     return bezier
 
+def _recursive(P, num_points):
+    return  [_recursive_aux(P, t) for t in np.linspace(0,1,num_points)]
+    
+def _recursive_aux(P,t):
+    n = P.shape[0] - 1
+    bezier = 0
+    for i in range(n+1):
+        bezier += P[i] * bernstein(n,i,t)
+    RECURSIVE_BERNSTEIN_DICT.clear() # For each t clear the dictionary
+    return bezier
+
 def bezier_subdivision(P, k, epsilon, lines=False):
     '''
     Parameters
@@ -110,7 +121,7 @@ def backward_differences_bezier(P, m, h=None):
 
 def comb(n, i):
     '''
-    numeros combinatorios (n choose i)
+    Computes the value of binomial coefficients (n choose i)
     using a dictionary
     '''
     if i == 0:
@@ -121,3 +132,17 @@ def comb(n, i):
         return BINOMIAL_DICT[n,i]
     BINOMIAL_DICT[n, i] = comb(n-1, i-1) + comb(n - 1, i)
     return BINOMIAL_DICT[n,i]
+
+def bernstein(n, i, t):
+    '''
+    Return the degree n Bernstein polynomial of the specified index i evaluated on t (B_i^n(t)),
+    With i dominated by n, using a dictionary. 
+    '''
+    if i < 0 or i > n:
+        return 0
+    if n == 0: # then i = 0 B_0^0
+        return 1
+    if (n, i) in RECURSIVE_BERNSTEIN_DICT:
+        return RECURSIVE_BERNSTEIN_DICT[n,i]
+    RECURSIVE_BERNSTEIN_DICT[n, i] = t*bernstein(n-1, i-1,t) + (1-t)*bernstein(n-1, i,t)
+    return RECURSIVE_BERNSTEIN_DICT[n,i]
