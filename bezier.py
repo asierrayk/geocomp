@@ -18,11 +18,9 @@ def polyeval_bezier(P, num_points, algorithm):
     algorithm :
         algorithm será una cadena con uno de los valores siguientes: 'direct',
         'recursive', 'horner' o 'deCasteljau'
-
     Returns
     -------
     La función devolverá un numpy.array de dimensión (num_points, dim) con los valores de la curva de Bézier en los instantes dados por num_points valores equiespaciados entre 0 y 1 (incluyendo extremos).
-
     '''
     grid = np.linspace(0,1,num_points)
     if algorithm == "direct":
@@ -55,12 +53,14 @@ def _horner(P, t, num_points):
     
     t_0 = t[:num_points/2]
     t_0 = t_0/(1-t_0)
+    t_0 = t_0[:,np.newaxis]
     pol_0 = [P[i] * comb(n,i) for i in range(n)]
 
-    bezier_0 = (1-t_0)**n * np.polyval(pol_0, t_0)
+    bezier_0 = (1-t_0)**n * np.polyval(pol_0, t_0[:,np.newaxis])
 
     t_1 = t[num_points/2:]
     t_1 = (1-t_1)/t_1
+    t_1 = t_1[:,np.newaxis]
     pol_1 = [P[n-i] * comb(n,i) for i in range(n)]
 
     bezier_1 = t_1**n * np.polyval(pol_1, t_1)
@@ -77,12 +77,9 @@ def bezier_subdivision(P, k, epsilon, lines=False):
         será el umbral de parada, que mide cuán cercana a una recta está la curva
     lines :
         Si lines=True, devolverá sólo la sucesión de extremos, sin puntos intermedios.
-
     Returns
     -------
     np.array que contendrá la sucesión de puntos dada por los polígonos de Bézier resultantes.
-
-
     '''
     pass
 
@@ -90,11 +87,9 @@ def backward_differences_bezier(P, m, h=None):
     '''
     evaluará la curva de Bézier en los puntos de la forma h*k para k=0,...,m
     Se usará el método de diferencias "hacia atrás" explicado en clase
-
     Parameters
     ----------
     P :
-
     m :
         habrá m + 1 puntos
     h :
