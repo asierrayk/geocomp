@@ -92,11 +92,11 @@ def _recursive_aux(P,t):
     return bezier
 
 def bezier_subdivision(P, k, epsilon, lines=False):
-    '''
+    """
     Parameters
     ----------
     k :
-        entero que indica el número de subdivisiones
+        integer which indicates the number of subdivisions to be made.
     epsilon :
         será el umbral de parada, que mide cuán cercana a una recta está la curva
     lines :
@@ -104,7 +104,7 @@ def bezier_subdivision(P, k, epsilon, lines=False):
     Returns
     -------
     np.array que contendrá la sucesión de puntos dada por los polígonos de Bézier resultantes.
-    '''
+    """
     pass
 
 def backward_differences_bezier(P, m, h=None):
