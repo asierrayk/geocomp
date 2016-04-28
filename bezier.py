@@ -39,11 +39,11 @@ def polyeval_bezier(P, num_points, algorithm):
 
 def _deCasteljau(P, num_points):
     t = np.linspace(0,1,num_points)
-    return [_deCasteljau_aux(P.astype(float), t[i]) for i in range(num_points)]
+    return np.array([_deCasteljau_aux(P, t[i]) for i in range(num_points)])
 
 def _deCasteljau_aux(b, t):
     n = b.shape[0] - 1
-    b = np.copy(P)
+    b = np.copy(P).astype("float")
     for k in range(1, n+1):
         for i in range(n+1-k): # Calculamos b[i] = (b_i)^k
             b[i] = (1-t)*b[i] + t*b[i+1]
@@ -53,24 +53,22 @@ def _horner(P, num_points):
     n = P.shape[0] - 1
     t = np.linspace(0,1,num_points)
 
-    t_0 = t[:num_points/2]
-    t_0 = t_0/(1-t_0)
-    t_0 = t_0[:,np.newaxis]
-    pol_0 = [P[i] * comb(n,i) for i in range(n+1)]
+    t0 = t[:num_points/2]
+    t0 = t0[:,np.newaxis]
+    pol_0 = np.array([P[i] * comb(n,i) for i in range(n+1)])
 
-    bezier_0 = (1-t_0)**n * np.polyval(pol_0, t_0)
+    bezier0 = (1-t0)**n * np.polyval(pol_0, t0/(1-t0))
 
-    t_1 = t[num_points/2:]
-    t_1 = (1-t_1)/t_1
-    t_1 = t_1[:,np.newaxis]
-    pol_1 = [P[n-i] * comb(n,i) for i in range(n)]
+    t1 = t[num_points/2:]
+    t1 = t1[:,np.newaxis]
+    pol_1 = np.array([P[n-i] * comb(n,i) for i in range(n+1)])
 
-    bezier_1 = t_1**n * np.polyval(pol_1, t_1)
+    bezier1 = t1**n * np.polyval(pol_1, (1-t1)/t1)
 
-    return np.concatenate((bezier_0, bezier_1))
+    return np.concatenate((bezier0, bezier1))
 
 def _direct(P, num_points):
-    return  [_direct_aux(P, t) for t in np.linspace(0,1,num_points)]
+    return  np.array([_direct_aux(P, t) for t in np.linspace(0,1,num_points)])
 
 def _direct_aux(P, t):
     n = P.shape[0] - 1
