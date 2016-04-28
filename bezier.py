@@ -88,6 +88,7 @@ def _recursive_aux(P,t):
     RECURSIVE_BERNSTEIN_DICT.clear() # For each t clear the dictionary
     return bezier
 
+
 def bezier_subdivision(P, k, epsilon, lines=False):
     """
     Parameters
@@ -121,15 +122,31 @@ def bezier_subdivision(P, k, epsilon, lines=False):
 
     # subdivision
     P0, P1 = subdivision(P, n)
-    bezier_subdivision(P0, k-1, epsilon, lines)
-    bezier_subdivision(P1, k-1, epsilon, lines)
+    R0 = bezier_subdivision(P0, k-1, epsilon, lines)[:-1, :] # all but the last one
+    R1 = bezier_subdivision(P1, k-1, epsilon, lines)
     # concatenate results and return them
+    return np.vstack((R0,R1))
 
 
-def subdivision(P, n):
+def subdivision(P):
     # we want the bezier polygon with 2n+1 points over [0, 0.5, 1]
-    pass
+    n, dim = P.shape
+    n = n-1
+    b = np.copy(P).astype("float")#np.vstack((np.copy(P),np.zeros(dim)))
+    t = 0.5
 
+    P0 = np.zeros((n+1, dim))
+    P1 = np.zeros((n+1, dim))
+    P0[0] = b[0]
+    P1[0] = b[n]
+
+    for i in range(1,n+1):
+        for k in range(n-i+1):
+            b[k] = t*(b[k] + b[k+1])
+        P0[i] = b[0]
+        P1[i] = b[n-i]
+
+    return P0, P1[::-1, :]
 
 
 def backward_differences_bezier(P, m, h=None):
@@ -152,8 +169,8 @@ def backward_differences_bezier(P, m, h=None):
     _, num_points = P.shape
     for i in range(num_points):
         diff_p[i] = np.diff(P, num_points - 1)
-    
-    
+
+
 
 
 
