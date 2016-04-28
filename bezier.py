@@ -148,11 +148,13 @@ def backward_differences_bezier(P, m, h=None):
         Si h=None entonces h=1/m
     """
     # primero hay que coger los p0...pn con horner
+    if h == None:
+        h = 1 / m
+    points = _horner(P, )
     _, num_points = P.shape
     for i in range(num_points):
         diff_p[i] = np.diff(P, num_points - 1)
     
-    diff_p[i][j] = 
     
 
 
