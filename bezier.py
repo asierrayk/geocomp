@@ -20,7 +20,9 @@ def polyeval_bezier(P, num_points, algorithm):
         'recursive', 'horner' o 'deCasteljau'
     Returns
     -------
-    La función devolverá un numpy.array de dimensión (num_points, dim) con los valores de la curva de Bézier en los instantes dados por num_points valores equiespaciados entre 0 y 1 (incluyendo extremos).
+    La función devolverá un numpy.array de dimensión (num_points, dim) con los 
+    valores de la curva de Bézier en los instantes dados por num_points valores
+    equiespaciados entre 0 y 1 (incluyendo extremos).
     '''
     grid = np.linspace(0,1,num_points)
     if algorithm == "direct":
@@ -29,11 +31,12 @@ def polyeval_bezier(P, num_points, algorithm):
         # los polinomios de Bernstein se calculen usando la fórmula recursiva que los caracteriza
         pass
     elif algorithm == "horner":
-        # método de Horner, dividiendo los valores en dos trozos: los menores que 0.5 y los mayores o iguales a 0.5
+        # método de Horner, dividiendo los valores en dos trozos: 
+        # los menores que 0.5 y los mayores o iguales a 0.5
         return _horner(P, num_points)
     elif algorithm == "deCasteljau":
         # evaluará la curva usando el algoritmo de De Casteljau
-        _deCasteljau(P, t)
+        _deCasteljau(P, num_points)
 
 def _deCasteljau(P, num_points): 
     t = np.linspace(0,1,num_points)
