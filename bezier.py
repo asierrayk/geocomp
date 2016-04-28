@@ -109,21 +109,24 @@ def bezier_subdivision(P, k, epsilon, lines=False):
         Bézier polygons
     
     """
-    pass
+    
 
 def backward_differences_bezier(P, m, h=None):
-    '''
+    """
+    Evaluate Bezier curve in the points...
     evaluará la curva de Bézier en los puntos de la forma h*k para k=0,...,m
     Se usará el método de diferencias "hacia atrás" explicado en clase
     Parameters
     ----------
     P :
     m :
-        habrá m + 1 puntos
     h :
+        if h == None then h = 1/m
         Si h=None entonces h=1/m
-    '''
-    pass
+    """
+    _, num_points = P.shape
+    diff_p = np.diff(P, num_points - 1)
+    
 
 
 def comb(n, i):
