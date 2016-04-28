@@ -6,7 +6,6 @@ BINOMIAL_DICT = dict()
 RECURSIVE_BERNSTEIN_DICT = dict()
 
 
-
 def polyeval_bezier(P, num_points, algorithm):
     '''
     Parameters
@@ -20,7 +19,7 @@ def polyeval_bezier(P, num_points, algorithm):
         'recursive', 'horner' o 'deCasteljau'
     Returns
     -------
-    La función devolverá un numpy.array de dimensión (num_points, dim) con los 
+    La función devolverá un numpy.array de dimensión (num_points, dim) con los
     valores de la curva de Bézier en los instantes dados por num_points valores
     equiespaciados entre 0 y 1 (incluyendo extremos).
     '''
@@ -31,29 +30,29 @@ def polyeval_bezier(P, num_points, algorithm):
         # los polinomios de Bernstein se calculen usando la fórmula recursiva que los caracteriza
         pass
     elif algorithm == "horner":
-        # método de Horner, dividiendo los valores en dos trozos: 
+        # método de Horner, dividiendo los valores en dos trozos:
         # los menores que 0.5 y los mayores o iguales a 0.5
         return _horner(P, num_points)
     elif algorithm == "deCasteljau":
         # evaluará la curva usando el algoritmo de De Casteljau
         _deCasteljau(P, num_points)
 
-def _deCasteljau(P, num_points): 
+def _deCasteljau(P, num_points):
     t = np.linspace(0,1,num_points)
     return [_deCasteljau_aux(P.astype(float), t[i]) for i in range(num_points)]
-    
+
 def _deCasteljau_aux(b, t):
     n = b.shape[0] - 1
     b = np.copy(P)
     for k in range(1, n+1):
         for i in range(n+1-k): # Calculamos b[i] = (b_i)^k
             b[i] = (1-t)*b[i] + t*b[i+1]
-    return b[0]    
+    return b[0]
 
 def _horner(P, num_points):
     n = P.shape[0] - 1
     t = np.linspace(0,1,num_points)
-    
+
     t_0 = t[:num_points/2]
     t_0 = t_0/(1-t_0)
     t_0 = t_0[:,np.newaxis]
@@ -69,10 +68,10 @@ def _horner(P, num_points):
     bezier_1 = t_1**n * np.polyval(pol_1, t_1)
 
     return np.concatenate((bezier_0, bezier_1))
-    
+
 def _direct(P, num_points):
     return  [_direct_aux(P, t) for t in np.linspace(0,1,num_points)]
-    
+
 def _direct_aux(P, t):
     n = P.shape[0] - 1
     bezier = 0
@@ -82,7 +81,7 @@ def _direct_aux(P, t):
 
 def _recursive(P, num_points):
     return  [_recursive_aux(P, t) for t in np.linspace(0,1,num_points)]
-    
+
 def _recursive_aux(P,t):
     n = P.shape[0] - 1
     bezier = 0
@@ -98,18 +97,42 @@ def bezier_subdivision(P, k, epsilon, lines=False):
     k :
         integer which indicates the number of subdivisions to be made.
     epsilon :
-        stopping threshold, which measures how close to a line 
+        stopping threshold, which measures how close to a line
             will the curve be.
     lines :
-        if lines=True, it will return only a sequence of extremal points, 
+        if lines=True, it will return only a sequence of extremal points,
             without intermediate points.
     Returns
     -------
-    np.array containing  sequence of points given by the resulting 
+    np.array containing  sequence of points given by the resulting
         Bézier polygons
-    
+
     """
-    
+
+    n = P.shape[0] - 1
+
+    # almost straight lines
+    diff2 = np.diff(P, n=2, axis=0) # n-1 points
+    max_diff2 = np.max(np.linalg.norm(diff2, axis=1))
+    if lines and n*(n-1)/8 * max_diff2 < epsilon:
+        return np.array([P[0], P[-1]])
+
+    # case 0
+    if k == 0 or max_diff2 < epsilon:
+        return P
+
+    # subdivision
+    P0, P1 = subdivision(P, n)
+    bezier_subdivision(P0, k-1, epsilon, lines)
+    bezier_subdivision(P1, k-1, epsilon, lines)
+    # concatenate results and return them
+
+
+def subdivision(P, n):
+    # we want the bezier polygon with 2n+1 points over [0, 0.5, 1]
+    pass
+
+
 
 def backward_differences_bezier(P, m, h=None):
     """
@@ -126,7 +149,7 @@ def backward_differences_bezier(P, m, h=None):
     """
     _, num_points = P.shape
     diff_p = np.diff(P, num_points - 1)
-    
+
 
 
 def comb(n, i):
@@ -146,7 +169,7 @@ def comb(n, i):
 def bernstein(n, i, t):
     '''
     Return the degree n Bernstein polynomial of the specified index i evaluated on t (B_i^n(t)),
-    With i dominated by n, using a dictionary. 
+    With i dominated by n, using a dictionary.
     '''
     if i < 0 or i > n:
         return 0
