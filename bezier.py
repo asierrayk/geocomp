@@ -78,7 +78,7 @@ def _direct_aux(P, t):
     return bezier
 
 def _recursive(P, num_points):
-    return  [_recursive_aux(P, t) for t in np.linspace(0,1,num_points)]
+    return  np.array([_recursive_aux(P, t) for t in np.linspace(0,1,num_points)])
 
 def _recursive_aux(P,t):
     n = P.shape[0] - 1
