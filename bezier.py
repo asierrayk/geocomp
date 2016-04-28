@@ -148,7 +148,8 @@ def backward_differences_bezier(P, m, h=None):
         Si h=None entonces h=1/m
     """
     _, num_points = P.shape
-    diff_p = np.diff(P, num_points - 1)
+    for i in range(num_points):
+        diff_p[i] = np.diff(P, num_points - 1)
 
 
 
