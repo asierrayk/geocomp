@@ -98,12 +98,16 @@ def bezier_subdivision(P, k, epsilon, lines=False):
     k :
         integer which indicates the number of subdivisions to be made.
     epsilon :
-        será el umbral de parada, que mide cuán cercana a una recta está la curva
+        stopping threshold, which measures how close to a line 
+            will the curve be.
     lines :
-        Si lines=True, devolverá sólo la sucesión de extremos, sin puntos intermedios.
+        if lines=True, it will return only a sequence of extremal points, 
+            without intermediate points.
     Returns
     -------
-    np.array que contendrá la sucesión de puntos dada por los polígonos de Bézier resultantes.
+    np.array containing  sequence of points given by the resulting 
+        Bézier polygons
+    
     """
     pass
 
