@@ -2,6 +2,7 @@
 from __future__ import division
 import numpy as np
 
+
 def polyeval_bezier(P, num_points, algorithm):
     """
     Evaluate a Bezier curve given an algorithm.
@@ -38,9 +39,9 @@ def polyeval_bezier(P, num_points, algorithm):
            [ 1.    ,  1.    ]])
 
     """
-    t = np.linspace(0,1,num_points)
+    t = np.linspace(0, 1, num_points)
     if algorithm == "direct":
-        return _direct(P,t)
+        return _direct(P, t)
     elif algorithm == "recursive":
         # using the recursive formula
         return _recursive(P, t)
@@ -50,6 +51,7 @@ def polyeval_bezier(P, num_points, algorithm):
     elif algorithm == "deCasteljau":
         # De Casteljau algorithm
         return _deCasteljau(P, t)
+
 
 def _deCasteljau(P, t):
     """
@@ -74,12 +76,13 @@ def _deCasteljau(P, t):
     """
     N, dim = P.shape
     num_points = t.shape[0]
-    t = t[:,np.newaxis, np.newaxis]
+    t = t[:, np.newaxis, np.newaxis]
     _t = 1 - t
 
-    P = _t*P[:, :] + t*np.vstack((P[1:, :], np.zeros(dim)))
-    for i in range(2,N):
-        P = _t*P + t*np.hstack((P[:, 1:, :], np.zeros((num_points, 1, dim))))
+    P = _t * P[:, :] + t * np.vstack((P[1:, :], np.zeros(dim)))
+    for i in range(2, N):
+        P = _t * P + t * \
+            np.hstack((P[:, 1:, :], np.zeros((num_points, 1, dim))))
     return P[:, 0, :]
 
 
@@ -110,21 +113,22 @@ def _horner(P, t):
     n = P.shape[0] - 1
     num_points = t.shape[0]
 
-    t0 = t[:num_points/2] # first num_points/2 points
-    t0 = t0[:,np.newaxis] # every point is a 1-dim array
+    t0 = t[:num_points / 2]  # first num_points/2 points
+    t0 = t0[:, np.newaxis]  # every point is a 1-dim array
     _t0 = 1 - t0
 
-    t1 = t[num_points/2:] # last num_points/2 points
-    t1 = t1[:,np.newaxis]
+    t1 = t[num_points / 2:]  # last num_points/2 points
+    t1 = t1[:, np.newaxis]
     _t1 = 1 - t1
 
-    pol_1 = np.array([P[i] * comb(n,i) for i in range(n+1)])
-    pol_0 = np.array([P[n-i] * comb(n,i) for i in range(n+1)])
+    pol_1 = np.array([P[i] * comb(n, i) for i in range(n + 1)])
+    pol_0 = np.array([P[n - i] * comb(n, i) for i in range(n + 1)])
 
-    bezier0 = _t0**n * np.polyval(pol_0, t0/_t0)
-    bezier1 = t1**n * np.polyval(pol_1, _t1/t1)
+    bezier0 = _t0**n * np.polyval(pol_0, t0 / _t0)
+    bezier1 = t1**n * np.polyval(pol_1, _t1 / t1)
 
     return np.concatenate((bezier0, bezier1))
+
 
 def _direct(P, t):
     """
@@ -146,13 +150,13 @@ def _direct(P, t):
     # b(t) = sum_i P(i) B(n,i,t)
     # B(n,i,t) = (n C i) t**i * (1-t)**(n-i)
     n = P.shape[0] - 1
-    #t = t[:, np.newaxis]#[1, 2, 3] => [[1], [2], [3]]
-    _t = 1-t
-    return sum(P[i]  * comb(n,i) * t[:,np.newaxis]**i * (_t[:,np.newaxis])**(n-i)
-        for i in range(n+1))# bezier
+    # t = t[:, np.newaxis]#[1, 2, 3] => [[1], [2], [3]]
+    _t = 1 - t
+    return sum(P[i] * comb(n, i) * t[:, np.newaxis]**i *
+               (_t[:, np.newaxis])**(n - i) for i in range(n + 1))  # bezier
 
 
-def _recursive(P,t):
+def _recursive(P, t):
     """
     Evaluate Bezier curve in the points using a recursive method to calculate
     the Bernstein polynomial
@@ -171,8 +175,9 @@ def _recursive(P,t):
 
     """
     n = P.shape[0] - 1
-    RECURSIVE_BERNSTEIN_DICT.clear() # For each t clear the dictionary
-    return sum(P[i] * bernstein(n,i,t)[:,np.newaxis] for i in range(n+1))
+    RECURSIVE_BERNSTEIN_DICT.clear()  # For each t clear the dictionary
+    return sum(P[i] * bernstein(n, i, t)[:, np.newaxis] for i in range(n + 1))
+
 
 def bezier_subdivision(P, k, epsilon, lines=False):
     """
@@ -196,7 +201,7 @@ def bezier_subdivision(P, k, epsilon, lines=False):
     -------
     np.array containing sequence of points given by the resulting
         Bézier polygons
-    
+
     Examples
     --------
     >>> P = np.asarray([[0,0],[1,0],[1,1]])
@@ -213,7 +218,7 @@ def bezier_subdivision(P, k, epsilon, lines=False):
            [ 0.9375,  0.5625],
            [ 1.    ,  0.75  ],
            [ 1.    ,  1.    ]])
-           
+
     >>> bezier_subdivision(P, k, epsilon,True)
     array([[ 0.  ,  0.  ],
            [ 0.75,  0.25],
@@ -224,9 +229,9 @@ def bezier_subdivision(P, k, epsilon, lines=False):
     n = P.shape[0] - 1
 
     # almost straight lines
-    diff2 = np.diff(P, n=2, axis=0) # n-1 diffs
+    diff2 = np.diff(P, n=2, axis=0)  # n-1 diffs
     max_diff2 = np.max(np.linalg.norm(diff2, axis=1))
-    if lines and n*(n-1)/8 * max_diff2 < epsilon:
+    if lines and n * (n - 1) / 8 * max_diff2 < epsilon:
         return np.array([P[0], P[-1]])
 
     # case 0
@@ -235,10 +240,16 @@ def bezier_subdivision(P, k, epsilon, lines=False):
 
     # subdivision
     P0, P1 = subdivision(P)
-    R0 = bezier_subdivision(P0, k-1, epsilon, lines)[:-1, :] # all but the last one
-    R1 = bezier_subdivision(P1, k-1, epsilon, lines)
+    R0 = bezier_subdivision(
+        P0,
+        k - 1,
+        epsilon,
+        lines)[
+        :-1,
+        :]  # all but the last one
+    R1 = bezier_subdivision(P1, k - 1, epsilon, lines)
     # concatenate results and return them
-    return np.vstack((R0,R1))
+    return np.vstack((R0, R1))
 
 
 def subdivision(P):
@@ -258,20 +269,20 @@ def subdivision(P):
     """
     # we want the bezier polygon with 2n+1 points over [0, 0.5, 1]
     n, dim = P.shape
-    n = n-1
-    b = np.copy(P).astype("float")#np.vstack((np.copy(P),np.zeros(dim)))
+    n = n - 1
+    b = np.copy(P).astype("float")  # np.vstack((np.copy(P),np.zeros(dim)))
     t = 0.5
 
-    P0 = np.zeros((n+1, dim))
-    P1 = np.zeros((n+1, dim))
+    P0 = np.zeros((n + 1, dim))
+    P1 = np.zeros((n + 1, dim))
     P0[0] = b[0]
     P1[0] = b[n]
 
-    for i in range(1,n+1):
-        for k in range(n-i+1):
-            b[k] = t*(b[k] + b[k+1])
+    for i in range(1, n + 1):
+        for k in range(n - i + 1):
+            b[k] = t * (b[k] + b[k + 1])
         P0[i] = b[0]
-        P1[i] = b[n-i]
+        P1[i] = b[n - i]
 
     return P0, P1[::-1, :]
 
@@ -324,37 +335,37 @@ def backward_differences_bezier(P, m, h=None):
        [-108. ,   96.5],
        [-160. ,  122. ]])
     """
-    if h == None:
+    if h is None:
         h = 1 / m
 
     n = P.shape[0] - 1
     dim = P.shape[1]
-    t = np.arange(0, (n + 1)*h, h)
-
+    t = np.arange(0, (n + 1) * h, h)
 
     points = _horner(P, t)
-    delta = np.zeros((n+1,m-n+1,dim))
+    delta = np.zeros((n + 1, m - n + 1, dim))
 
     # forward
-    dif = [np.diff(points.T, i).T for i in range(n+1)]
-    delta[n] = np.repeat(dif[n], m-n+1, axis=0)
+    dif = [np.diff(points.T, i).T for i in range(n + 1)]
+    delta[n] = np.repeat(dif[n], m - n + 1, axis=0)
 
-    #backward
-    for k in range(n-1, -1, -1):
+    # backward
+    for k in range(n - 1, -1, -1):
         col_next = delta[k + 1]
-        col_next[0] = col_next[0] + dif[k][n-k] # addition
+        col_next[0] = col_next[0] + dif[k][n - k]  # addition
         delta[k] = np.cumsum(col_next, axis=0)
         # cumSum(r,col_next) # tri_matrix.dot(indep_terms)
 
     return np.vstack((points, delta[0][:-1, :]))
 
 
-
 BINOMIAL_DICT = dict()
+
+
 def comb(n, i):
     """
     Compute binomial coefficient (n, i) using a dictionary
-    
+
     Calculate recursively how many different subsets with i elements can we
     take for a given set of n elements.
     Do so recursively, storing calculated elements into a dictionary for
@@ -364,9 +375,9 @@ def comb(n, i):
     ----------
     n:
         Cardinal of the given sets
-    i: 
+    i:
         cardinal of the subsets
-    
+
     Returns
     -------
     The desired number of combinations we can make.
@@ -376,20 +387,22 @@ def comb(n, i):
     if n == 0:
         return 0
     if (n, i) in BINOMIAL_DICT:
-        return BINOMIAL_DICT[n,i]
-    BINOMIAL_DICT[n, i] = comb(n-1, i-1) + comb(n - 1, i)
-    return BINOMIAL_DICT[n,i]
+        return BINOMIAL_DICT[n, i]
+    BINOMIAL_DICT[n, i] = comb(n - 1, i - 1) + comb(n - 1, i)
+    return BINOMIAL_DICT[n, i]
 
 
 RECURSIVE_BERNSTEIN_DICT = dict()
+
+
 def bernstein(n, i, t):
     """
     Calculate Bernstein polynomial
-    
-    Return the degree n Bernstein polynomial of the specified 
+
+    Return the degree n Bernstein polynomial of the specified
      index i evaluated on t (B_i^n(t)),
      with i dominated by n, using a dictionary.
-     
+
     Parameters
     ----------
     n:
@@ -398,7 +411,7 @@ def bernstein(n, i, t):
         Second parameter of the Bernstein polynomial B_i^n(t)
     t:
         point where we want to calculate the value of the Bernstein polynomial
-    
+
     Returns
     -------
     Value of the berstein polynomial of parameters n, i in the point t.
@@ -407,9 +420,10 @@ def bernstein(n, i, t):
     _t = 1 - t
     if i < 0 or i > n:
         return np.zeros(num_points)
-    if n == 0: # then i = 0 B_0^0
+    if n == 0:  # then i = 0 B_0^0
         return np.ones(num_points)
     if (n, i) in RECURSIVE_BERNSTEIN_DICT:
         return RECURSIVE_BERNSTEIN_DICT[(n, i)]
-    RECURSIVE_BERNSTEIN_DICT[(n, i)] = t*bernstein(n-1, i-1,t) + _t*bernstein(n-1, i,t)
+    RECURSIVE_BERNSTEIN_DICT[
+        (n, i)] = t * bernstein(n - 1, i - 1, t) + _t * bernstein(n - 1, i, t)
     return RECURSIVE_BERNSTEIN_DICT[(n, i)]
