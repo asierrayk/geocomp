@@ -24,7 +24,19 @@ def polyeval_bezier(P, num_points, algorithm):
     numpy.array of dimension (num_points, dim) with the values of the Bezier
         curve in the instants given by num_points equally-spaced values between
         0 and 1 included.
+        
+    Examples
+    --------  
+    >>> P = np.asarray([[0,0],[1,0],[1,1]])
+    >>> num_points = 5
 
+    >>> polyeval_bezier(P, num_points, "recursive")
+    array([[ 0.    ,  0.    ],
+           [ 0.4375,  0.0625],
+           [ 0.75  ,  0.25  ],
+           [ 0.9375,  0.5625],
+           [ 1.    ,  1.    ]])
+           
     """
     t = np.linspace(0,1,num_points)
     if algorithm == "direct":
