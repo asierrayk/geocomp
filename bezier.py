@@ -24,9 +24,9 @@ def polyeval_bezier(P, num_points, algorithm):
     numpy.array of dimension (num_points, dim) with the values of the Bezier
         curve in the instants given by num_points equally-spaced values between
         0 and 1 included.
-        
+
     Examples
-    --------  
+    --------
     >>> P = np.asarray([[0,0],[1,0],[1,1]])
     >>> num_points = 5
 
@@ -36,7 +36,7 @@ def polyeval_bezier(P, num_points, algorithm):
            [ 0.75  ,  0.25  ],
            [ 0.9375,  0.5625],
            [ 1.    ,  1.    ]])
-           
+
     """
     t = np.linspace(0,1,num_points)
     if algorithm == "direct":
@@ -305,8 +305,25 @@ def backward_differences_bezier(P, m, h=None):
     -------
     The obtained bezier curve
 
+    Examples
+    --------
+    >>> P = np.asarray([[0,2],[1,0], [3,0], [4,2]])
+    >>> m = 10
+    >>> h = 0.5
+
+    >>> backward_differences_bezier(P, m, h)
+    array([[   0. ,    2. ],
+       [   2. ,    0.5],
+       [   4. ,    2. ],
+       [   4.5,    6.5],
+       [   2. ,   14. ],
+       [  -5. ,   24.5],
+       [ -18. ,   38. ],
+       [ -38.5,   54.5],
+       [ -68. ,   74. ],
+       [-108. ,   96.5],
+       [-160. ,  122. ]])
     """
-    # primero hay que coger los p0...pn con horner
     if h == None:
         h = 1 / m
 
@@ -327,7 +344,7 @@ def backward_differences_bezier(P, m, h=None):
         col_next = delta[k + 1]
         col_next[0] = col_next[0] + dif[k][n-k] # addition
         delta[k] = np.cumsum(col_next, axis=0)
-        # cumSum(r,col_next)# tri_matrix.dot(indep_terms)
+        # cumSum(r,col_next) # tri_matrix.dot(indep_terms)
 
     return np.vstack((points, delta[0][:-1, :]))
 
