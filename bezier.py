@@ -42,10 +42,10 @@ def polyeval_bezier(P, num_points, algorithm):
 def _deCasteljau(P, t):
     """
     Evaluate Bezier curve given by P applying de Casteljau's algorithm.
-    
+
     Apply recursive relation in Bernstein polynomials to achieve the
     algorithm.
-    
+
     Parameters
     ----------
     P:
@@ -53,18 +53,29 @@ def _deCasteljau(P, t):
     t:
         numpy.array t of dimension (num_points)
         num_points are the points in which we want to evaluate the Bezier curve
-        
+
     Returns
     -------
     np.array containing  sequence of points given by the resulting
         Bézier polygons
-        
+
     """
-    return np.array([_deCasteljau_aux(P, i) for i in t])
+
+    n = b.shape[0] - 1
+    t = t[:,np.newaxis]
+    _t = 1 - t
+
+    b = np.copy(P).astype("float")
+    for k in range(1, n+1):
+        for i in range(n+1-k): # b[i] = b_i^k
+            b[i] = _t*b[i] + t*b[i+1]
+    return b[0]
+    #return np.array([_deCasteljau_aux(P, i) for i in t])
 
 def _deCasteljau_aux(b, t):
     n = b.shape[0] - 1
     b = np.copy(P).astype("float")
+
     for k in range(1, n+1):
         for i in range(n+1-k): # Calculamos b[i] = (b_i)^k
             b[i] = (1-t)*b[i] + t*b[i+1]
@@ -265,7 +276,7 @@ def backward_differences_bezier(P, m, h=None):
         number of parts of the partition, m + 1 points
     h :
         length of each part of the partition, if h == None then h = 1/m
-    
+
     Returns
     -------
     The obtained bezier curve
