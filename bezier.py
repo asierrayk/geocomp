@@ -2,10 +2,6 @@
 from __future__ import division
 import numpy as np
 
-BINOMIAL_DICT = dict()
-RECURSIVE_BERNSTEIN_DICT = dict()
-
-
 def polyeval_bezier(P, num_points, algorithm):
     """
     Parameters
@@ -31,14 +27,14 @@ def polyeval_bezier(P, num_points, algorithm):
         return _direct(P,num_points)
     elif algorithm == "recursive":
         # los polinomios de Bernstein se calculen usando la fórmula recursiva que los caracteriza
-        pass
+        return _recursive(P, num_points)
     elif algorithm == "horner":
         # método de Horner, dividiendo los valores en dos trozos:
         # los menores que 0.5 y los mayores o iguales a 0.5
         return _horner(P, num_points)
     elif algorithm == "deCasteljau":
         # evaluará la curva usando el algoritmo de De Casteljau
-        _deCasteljau(P, num_points)
+        return _deCasteljau(P, num_points)
 
 def _deCasteljau(P, num_points):
     t = np.linspace(0,1,num_points)
@@ -56,17 +52,19 @@ def _horner(P, num_points):
     n = P.shape[0] - 1
     t = np.linspace(0,1,num_points)
 
-    t0 = t[:num_points/2]
-    t0 = t0[:,np.newaxis]
-    pol_0 = np.array([P[i] * comb(n,i) for i in range(n+1)])
+    t0 = t[:num_points/2] # first num_points/2 points
+    t0 = t0[:,np.newaxis] # every point is a 1-dim array
+    _t0 = 1 - t0
 
-    bezier0 = (1-t0)**n * np.polyval(pol_0, t0/(1-t0))
-
-    t1 = t[num_points/2:]
+    t1 = t[num_points/2:] # last num_points/2 points
     t1 = t1[:,np.newaxis]
-    pol_1 = np.array([P[n-i] * comb(n,i) for i in range(n+1)])
+    _t1 = 1 - t1
 
-    bezier1 = t1**n * np.polyval(pol_1, (1-t1)/t1)
+    pol_1 = np.array([P[i] * comb(n,i) for i in range(n+1)])
+    pol_0 = np.array([P[n-i] * comb(n,i) for i in range(n+1)])
+
+    bezier0 = _t0**n * np.polyval(pol_0, t0/_t0)
+    bezier1 = t1**n * np.polyval(pol_1, _t1/t1)
 
     return np.concatenate((bezier0, bezier1))
 
@@ -115,7 +113,7 @@ def bezier_subdivision(P, k, epsilon, lines=False):
     n = P.shape[0] - 1
 
     # almost straight lines
-    diff2 = np.diff(P, n=2, axis=0) # n-1 points
+    diff2 = np.diff(P, n=2, axis=0) # n-1 diffs
     max_diff2 = np.max(np.linalg.norm(diff2, axis=1))
     if lines and n*(n-1)/8 * max_diff2 < epsilon:
         return np.array([P[0], P[-1]])
@@ -177,7 +175,7 @@ def backward_differences_bezier(P, m, h=None):
 
 
 
-
+BINOMIAL_DICT = dict()
 def comb(n, i):
     '''
     Computes the value of binomial coefficients (n choose i)
@@ -192,6 +190,8 @@ def comb(n, i):
     BINOMIAL_DICT[n, i] = comb(n-1, i-1) + comb(n - 1, i)
     return BINOMIAL_DICT[n,i]
 
+
+RECURSIVE_BERNSTEIN_DICT = dict()
 def bernstein(n, i, t):
     '''
     Return the degree n Bernstein polynomial of the specified index i evaluated on t (B_i^n(t)),
