@@ -48,6 +48,28 @@ def _deCasteljau_aux(b, t):
     return b[0]
 
 def _horner(P, t):
+    """
+    Evaluate Bezier curve in the points using a the horner algorithm to evaluate
+    the Bezier curve.
+
+    Notes
+    -----    
+    For further information, see Bézier and B-Spline Techniques (Prautzsch, Hartmut, Boehm, Wolfgang, Paluszny, Marco)
+    section 2.3 (observation 4)
+     
+    Parameters
+    ----------
+    P :
+        numpy.array P of dimension (n + 1, dim)
+    t : 
+        numpy.array t of dimension (num_points)
+        num_points are the points in which we want to evaluate the Bezier curve
+    Returns
+    -------
+    np.array containing  sequence of points given by the resulting
+        Bézier polygons
+
+    """
     n = P.shape[0] - 1
     num_points = t.shape[0]
 
@@ -68,6 +90,22 @@ def _horner(P, t):
     return np.concatenate((bezier0, bezier1))
 
 def _direct(P, t):
+    """
+    Evaluate Bezier curve in the points using a direct method   
+     
+    Parameters
+    ----------
+    P :
+        numpy.array P of dimension (n + 1, dim)
+    t : 
+        numpy.array t of dimension (num_points)
+        num_points are the points in which we want to evaluate the Bezier curve
+    Returns
+    -------
+    np.array containing  sequence of points given by the resulting
+        Bézier polygons
+
+    """
     # b(t) = sum_i P(i) B(n,i,t)
     # B(n,i,t) = (n C i) t**i * (1-t)**(n-i)
     n = P.shape[0] - 1
@@ -78,6 +116,23 @@ def _direct(P, t):
 
 
 def _recursive(P,t):
+    """
+    Evaluate Bezier curve in the points using a recursive method to calculate 
+    the Bernstein polynomial
+     
+    Parameters
+    ----------
+    P :
+        numpy.array P of dimension (n + 1, dim)
+    t : 
+        numpy.array t of dimension (num_points)
+        num_points are the points in which we want to evaluate the Bezier curve
+    Returns
+    -------
+    np.array containing  sequence of points given by the resulting
+        Bézier polygons
+
+    """
     n = P.shape[0] - 1
     RECURSIVE_BERNSTEIN_DICT.clear() # For each t clear the dictionary
     return sum(P[i] * bernstein(n,i,t)[:,np.newaxis] for i in range(n+1))
