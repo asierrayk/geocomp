@@ -7,22 +7,25 @@ RECURSIVE_BERNSTEIN_DICT = dict()
 
 
 def polyeval_bezier(P, num_points, algorithm):
-    '''
+    """
     Parameters
     ----------
     P :
-        numpy.array P de dimensión (n + 1, dim)
+        numpy.array P of dimension (n + 1, dim)
     num_points :
-        entero positivo
+        positive integer
     algorithm :
-        algorithm será una cadena con uno de los valores siguientes: 'direct',
+        string with one of the following values: 'direct',
         'recursive', 'horner' o 'deCasteljau'
     Returns
     -------
+    numpy.array of dimension (num_points, dim) with the values of the Bezier
+    curve in the instants given by ...
     La función devolverá un numpy.array de dimensión (num_points, dim) con los
     valores de la curva de Bézier en los instantes dados por num_points valores
     equiespaciados entre 0 y 1 (incluyendo extremos).
-    '''
+    
+    """
     grid = np.linspace(0,1,num_points)
     if algorithm == "direct":
         return _direct(P,num_points)
