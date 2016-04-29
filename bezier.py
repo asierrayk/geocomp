@@ -4,36 +4,39 @@ import numpy as np
 
 def polyeval_bezier(P, num_points, algorithm):
     """
+    Evaluate a Bezier curve given an algorithm.
+
+    Evaluate the Bezier curve given by the Bezier polygon P
+    in num_points equally-spaced instants between 0 and 1 included.
+
     Parameters
     ----------
     P :
-        numpy.array P of dimension (n + 1, dim)
+        numpy.array of dimension (n + 1, dim). Specifies the Bezier polygon.
     num_points :
         positive integer
     algorithm :
         string with one of the following values: 'direct',
-        'recursive', 'horner' o 'deCasteljau'
+            'recursive', 'horner' o 'deCasteljau'
+
     Returns
     -------
     numpy.array of dimension (num_points, dim) with the values of the Bezier
-    curve in the instants given by ...
-    La función devolverá un numpy.array de dimensión (num_points, dim) con los
-    valores de la curva de Bézier en los instantes dados por num_points valores
-    equiespaciados entre 0 y 1 (incluyendo extremos).
+        curve in the instants given by num_points equally-spaced values between
+        0 and 1 included.
 
     """
     t = np.linspace(0,1,num_points)
     if algorithm == "direct":
         return _direct(P,t)
     elif algorithm == "recursive":
-        # los polinomios de Bernstein se calculen usando la fórmula recursiva que los caracteriza
+        # using the recursive formula
         return _recursive(P, t)
     elif algorithm == "horner":
-        # método de Horner, dividiendo los valores en dos trozos:
-        # los menores que 0.5 y los mayores o iguales a 0.5
+        # Horner method
         return _horner(P, t)
     elif algorithm == "deCasteljau":
-        # evaluará la curva usando el algoritmo de De Casteljau
+        # De Casteljau algorithm
         return _deCasteljau(P, t)
 
 def _deCasteljau(P, t):
@@ -49,24 +52,25 @@ def _deCasteljau_aux(b, t):
 
 def _horner(P, t):
     """
-    Evaluate Bezier curve in the points using a the horner algorithm to evaluate
+    Evaluate Bezier curve in the points using the horner algorithm to evaluate
     the Bezier curve.
 
     Notes
-    -----    
+    -----
     For further information, see Bézier and B-Spline Techniques (Prautzsch, Hartmut, Boehm, Wolfgang, Paluszny, Marco)
     section 2.3 (observation 4)
-     
+
     Parameters
     ----------
     P :
-        numpy.array P of dimension (n + 1, dim)
-    t : 
-        numpy.array t of dimension (num_points)
-        num_points are the points in which we want to evaluate the Bezier curve
+        numpy.array of dimension (n + 1, dim)
+    t :
+        numpy.array of dimension (num_points)
+        Contains the points in which we want to evaluate the Bezier curve
+
     Returns
     -------
-    np.array containing  sequence of points given by the resulting
+    np.array containing sequence of points given by the resulting
         Bézier polygons
 
     """
@@ -91,18 +95,18 @@ def _horner(P, t):
 
 def _direct(P, t):
     """
-    Evaluate Bezier curve in the points using a direct method   
-     
+    Evaluate Bezier curve in the points using a direct method
+
     Parameters
     ----------
     P :
         numpy.array P of dimension (n + 1, dim)
-    t : 
+    t :
         numpy.array t of dimension (num_points)
-        num_points are the points in which we want to evaluate the Bezier curve
+        Contains the points in which we want to evaluate the Bezier curve
     Returns
     -------
-    np.array containing  sequence of points given by the resulting
+    np.array containing sequence of points given by the resulting
         Bézier polygons
 
     """
@@ -117,19 +121,19 @@ def _direct(P, t):
 
 def _recursive(P,t):
     """
-    Evaluate Bezier curve in the points using a recursive method to calculate 
+    Evaluate Bezier curve in the points using a recursive method to calculate
     the Bernstein polynomial
-     
+
     Parameters
     ----------
     P :
         numpy.array P of dimension (n + 1, dim)
-    t : 
+    t :
         numpy.array t of dimension (num_points)
-        num_points are the points in which we want to evaluate the Bezier curve
+        Contains the points in which we want to evaluate the Bezier curve
     Returns
     -------
-    np.array containing  sequence of points given by the resulting
+    np.array containing sequence of points given by the resulting
         Bézier polygons
 
     """
@@ -139,6 +143,12 @@ def _recursive(P,t):
 
 def bezier_subdivision(P, k, epsilon, lines=False):
     """
+    Generate the Bezier curve using subdivision method.
+
+    Notes
+    -----
+    For further information, see Bézier and B-Spline Techniques (Prautzsch, Hartmut, Boehm, Wolfgang, Paluszny, Marco)
+    sections 3.3 - 3.5
     Parameters
     ----------
     k :
@@ -151,7 +161,7 @@ def bezier_subdivision(P, k, epsilon, lines=False):
             without intermediate points.
     Returns
     -------
-    np.array containing  sequence of points given by the resulting
+    np.array containing sequence of points given by the resulting
         Bézier polygons
 
     """
@@ -177,6 +187,20 @@ def bezier_subdivision(P, k, epsilon, lines=False):
 
 
 def subdivision(P):
+    """
+    Calculate a Bezier polygon with 2*n+1 points.
+
+    Parameters
+    ----------
+    P :
+        numpy.array of dimension (n + 1, dim). Specifies the Bezier polygon.
+
+    Returns
+    -------
+    two numpy.array, each one with the Bezier polygon from 0 to 0.5
+        and from 0.5 to 1, respectively.
+
+    """
     # we want the bezier polygon with 2n+1 points over [0, 0.5, 1]
     n, dim = P.shape
     n = n-1
@@ -199,20 +223,20 @@ def subdivision(P):
 
 def backward_differences_bezier(P, m, h=None):
     """
-    Calculate Bezier curve applying backward differences method.    
-    
-    Find the initial points of the Bezier curve given by conrol points 
+    Calculate Bezier curve applying backward differences method.
+
+    Find the initial points of the Bezier curve given by conrol points
     in P.
     Use the backward differences method, by first applying it forward
     to get the n-th order differences of the previously calculated points
     , and then applying it backwards to get the extended points
     p_n+1,...,p_m
-    
+
     Notes
     -----
     For further information, see Metdos de Bezier y B-splines section 3.6
     by Prautzsch, Bohm, Paluszny.
-    
+
     Parameters
     ----------
     P :
