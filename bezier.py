@@ -206,6 +206,28 @@ def bezier_subdivision(P, k, epsilon, lines=False):
     -------
     np.array containing sequence of points given by the resulting
         Bézier polygons
+    
+    Examples
+    --------
+    >>> P = np.asarray([[0,0],[1,0],[1,1]])
+    >>> k = 5
+    >>> epsilon = 0.1
+
+    >>> bezier_subdivision(P, k, epsilon,False)
+    array([[ 0.    ,  0.    ],
+           [ 0.25  ,  0.    ],
+           [ 0.4375,  0.0625],
+           [ 0.625 ,  0.125 ],
+           [ 0.75  ,  0.25  ],
+           [ 0.875 ,  0.375 ],
+           [ 0.9375,  0.5625],
+           [ 1.    ,  0.75  ],
+           [ 1.    ,  1.    ]])
+           
+    >>> bezier_subdivision(P, k, epsilon,True)
+    array([[ 0.  ,  0.  ],
+           [ 0.75,  0.25],
+           [ 1.  ,  1.  ]])
 
     """
 
