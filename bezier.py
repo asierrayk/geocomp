@@ -68,10 +68,14 @@ def _horner(P, t):
     return np.concatenate((bezier0, bezier1))
 
 def _direct(P, t):
+    # b(t) = sum_i P(i) B(n,i,t)
+    # B(n,i,t) = (n C i) t**i * (1-t)**(n-i)
     n = P.shape[0] - 1
+    #t = t[:, np.newaxis]#[1, 2, 3] => [[1], [2], [3]]
     _t = 1-t
     return sum(P[i]  * comb(n,i) * t[:,np.newaxis]**i * (_t[:,np.newaxis])**(n-i)
         for i in range(n+1))# bezier
+
 
 def _recursive(P,t):
     n = P.shape[0] - 1
@@ -211,4 +215,4 @@ def bernstein(n, i, t):
     if (n, i) in RECURSIVE_BERNSTEIN_DICT:
         return RECURSIVE_BERNSTEIN_DICT[(n, i)]
     RECURSIVE_BERNSTEIN_DICT[(n, i)] = t*bernstein(n-1, i-1,t) + _t*bernstein(n-1, i,t)
-    return RECURSIVE_BERNSTEIN_DICT[(n, i)]    
+    return RECURSIVE_BERNSTEIN_DICT[(n, i)]
