@@ -78,17 +78,10 @@ def _direct_aux(P, t):
     return sum(P[i]  * comb(n,i) * t**i * (1-t)**(n-i)
         for i in range(n+1))# bezier
 
-def _recursive(P, t):
-    return  np.array([_recursive_aux(P, i) for i in t])
-
-def _recursive_aux(P,t):
+def _recursive(P,t):
     n = P.shape[0] - 1
-    bezier = 0
-    for i in range(n+1):
-        bezier += P[i] * bernstein(n,i,t)
     RECURSIVE_BERNSTEIN_DICT.clear() # For each t clear the dictionary
-    return bezier
-
+    return sum(P[i] * bernstein(n,i,t)[:,np.newaxis] for i in range(n+1))
 
 def bezier_subdivision(P, k, epsilon, lines=False):
     """
@@ -214,11 +207,13 @@ def bernstein(n, i, t):
     Return the degree n Bernstein polynomial of the specified index i evaluated on t (B_i^n(t)),
     With i dominated by n, using a dictionary.
     '''
+    num_points = t.shape[0]
+    _t = 1 - t
     if i < 0 or i > n:
-        return 0
+        return np.zeros(num_points)
     if n == 0: # then i = 0 B_0^0
-        return 1
+        return np.ones(num_points)
     if (n, i) in RECURSIVE_BERNSTEIN_DICT:
-        return RECURSIVE_BERNSTEIN_DICT[n,i]
-    RECURSIVE_BERNSTEIN_DICT[n, i] = t*bernstein(n-1, i-1,t) + (1-t)*bernstein(n-1, i,t)
-    return RECURSIVE_BERNSTEIN_DICT[n,i]
+        return RECURSIVE_BERNSTEIN_DICT[(n, i)]
+    RECURSIVE_BERNSTEIN_DICT[(n, i)] = t*bernstein(n-1, i-1,t) + _t*bernstein(n-1, i,t)
+    return RECURSIVE_BERNSTEIN_DICT[(n, i)]    
