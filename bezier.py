@@ -50,7 +50,7 @@ def _deCasteljau_aux(b, t):
 def _horner(P, t):
     n = P.shape[0] - 1
     num_points = t.shape[0]
-    
+
     t0 = t[:num_points/2] # first num_points/2 points
     t0 = t0[:,np.newaxis] # every point is a 1-dim array
     _t0 = 1 - t0
@@ -158,19 +158,37 @@ def backward_differences_bezier(P, m, h=None):
     Parameters
     ----------
     P :
+        initial set of points
     m :
+        number of parts of the partition, m + 1 points
     h :
-        if h == None then h = 1/m
-        Si h=None entonces h=1/m
+        length of each part of the partition, if h == None then h = 1/m
+
     """
     # primero hay que coger los p0...pn con horner
     if h == None:
         h = 1 / m
-    points = _horner(P, )
-    _, num_points = P.shape
-    for i in range(num_points):
-        diff_p[i] = np.diff(P, num_points - 1)
 
+    n = P.shape[0] - 1
+    dim = P.shape[1]
+    t = np.arange(0, (n + 1)*h, h)
+
+
+    points = _horner(P, t)
+    delta = np.zeros((n+1,m-n+1,dim))
+
+    # forward
+    dif = [np.diff(points.T, i).T for i in range(n+1)]
+    delta[n] = np.repeat(dif[n], m-n+1, axis=0)
+
+    #backward
+    for k in range(n-1, -1, -1):
+        col_next = delta[k + 1]
+        col_next[0] = col_next[0] + dif[k][n-k] # addition
+        delta[k] = np.cumsum(col_next, axis=0)
+        # cumSum(r,col_next)# tri_matrix.dot(indep_terms)
+
+    return np.vstack((points, delta[0][:-1, :]))
 
 
 
