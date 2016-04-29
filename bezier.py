@@ -24,7 +24,7 @@ def polyeval_bezier(P, num_points, algorithm):
     La función devolverá un numpy.array de dimensión (num_points, dim) con los
     valores de la curva de Bézier en los instantes dados por num_points valores
     equiespaciados entre 0 y 1 (incluyendo extremos).
-    
+
     """
     grid = np.linspace(0,1,num_points)
     if algorithm == "direct":
@@ -125,7 +125,7 @@ def bezier_subdivision(P, k, epsilon, lines=False):
         return P
 
     # subdivision
-    P0, P1 = subdivision(P, n)
+    P0, P1 = subdivision(P)
     R0 = bezier_subdivision(P0, k-1, epsilon, lines)[:-1, :] # all but the last one
     R1 = bezier_subdivision(P1, k-1, epsilon, lines)
     # concatenate results and return them
