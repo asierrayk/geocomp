@@ -22,23 +22,22 @@ def polyeval_bezier(P, num_points, algorithm):
     equiespaciados entre 0 y 1 (incluyendo extremos).
 
     """
-    grid = np.linspace(0,1,num_points)
+    t = np.linspace(0,1,num_points)
     if algorithm == "direct":
-        return _direct(P,num_points)
+        return _direct(P,t)
     elif algorithm == "recursive":
         # los polinomios de Bernstein se calculen usando la fórmula recursiva que los caracteriza
-        return _recursive(P, num_points)
+        return _recursive(P, t)
     elif algorithm == "horner":
         # método de Horner, dividiendo los valores en dos trozos:
         # los menores que 0.5 y los mayores o iguales a 0.5
-        return _horner(P, num_points)
+        return _horner(P, t)
     elif algorithm == "deCasteljau":
         # evaluará la curva usando el algoritmo de De Casteljau
-        return _deCasteljau(P, num_points)
+        return _deCasteljau(P, t)
 
-def _deCasteljau(P, num_points):
-    t = np.linspace(0,1,num_points)
-    return np.array([_deCasteljau_aux(P, t[i]) for i in range(num_points)])
+def _deCasteljau(P, t):
+    return np.array([_deCasteljau_aux(P, i) for i in t])
 
 def _deCasteljau_aux(b, t):
     n = b.shape[0] - 1
@@ -48,10 +47,10 @@ def _deCasteljau_aux(b, t):
             b[i] = (1-t)*b[i] + t*b[i+1]
     return b[0]
 
-def _horner(P, num_points):
+def _horner(P, t):
     n = P.shape[0] - 1
-    t = np.linspace(0,1,num_points)
-
+    num_points = t.shape[0]
+    
     t0 = t[:num_points/2] # first num_points/2 points
     t0 = t0[:,np.newaxis] # every point is a 1-dim array
     _t0 = 1 - t0
@@ -68,8 +67,8 @@ def _horner(P, num_points):
 
     return np.concatenate((bezier0, bezier1))
 
-def _direct(P, num_points):
-    return  np.array([_direct_aux(P, t) for t in np.linspace(0,1,num_points)])
+def _direct(P, t):
+    return  np.array([_direct_aux(P, i) for i in t])
 
 def _direct_aux(P, t):
     n = P.shape[0] - 1
@@ -79,8 +78,8 @@ def _direct_aux(P, t):
     return sum(P[i]  * comb(n,i) * t**i * (1-t)**(n-i)
         for i in range(n+1))# bezier
 
-def _recursive(P, num_points):
-    return  np.array([_recursive_aux(P, t) for t in np.linspace(0,1,num_points)])
+def _recursive(P, t):
+    return  np.array([_recursive_aux(P, i) for i in t])
 
 def _recursive_aux(P,t):
     n = P.shape[0] - 1
