@@ -72,26 +72,16 @@ def _deCasteljau(P, t):
         Bézier polygons
 
     """
-
-    n = b.shape[0] - 1
-    t = t[:,np.newaxis]
+    N, dim = P.shape
+    num_points = t.shape[0]
+    t = t[:,np.newaxis, np.newaxis]
     _t = 1 - t
 
-    b = np.copy(P).astype("float")
-    for k in range(1, n+1):
-        for i in range(n+1-k): # b[i] = b_i^k
-            b[i] = _t*b[i] + t*b[i+1]
-    return b[0]
-    #return np.array([_deCasteljau_aux(P, i) for i in t])
+    P = _t*P[:, :] + t*np.vstack((P[1:, :], np.zeros(dim)))
+    for i in range(2,N):
+        P = _t*P + t*np.hstack((P[:, 1:, :], np.zeros((num_points, 1, dim))))
+    return P[:, 0, :]
 
-def _deCasteljau_aux(b, t):
-    n = b.shape[0] - 1
-    b = np.copy(P).astype("float")
-
-    for k in range(1, n+1):
-        for i in range(n+1-k): # Calculamos b[i] = (b_i)^k
-            b[i] = (1-t)*b[i] + t*b[i+1]
-    return b[0]
 
 def _horner(P, t):
     """
@@ -345,10 +335,25 @@ def backward_differences_bezier(P, m, h=None):
 
 BINOMIAL_DICT = dict()
 def comb(n, i):
-    '''
-    Computes the value of binomial coefficients (n choose i)
-    using a dictionary
-    '''
+    """
+    Compute binomial coefficient (n, i) using a dictionary
+    
+    Calculate recursively how many different subsets with i elements can we
+    take for a given set of n elements.
+    Do so recursively, storing calculated elements into a dictionary for
+    better performance.
+
+    Parameters
+    ----------
+    n:
+        Cardinal of the given sets
+    i: 
+        cardinal of the subsets
+    
+    Returns
+    -------
+    The desired number of combinations we can make.
+    """
     if i == 0:
         return 1
     if n == 0:
@@ -361,10 +366,26 @@ def comb(n, i):
 
 RECURSIVE_BERNSTEIN_DICT = dict()
 def bernstein(n, i, t):
-    '''
-    Return the degree n Bernstein polynomial of the specified index i evaluated on t (B_i^n(t)),
-    With i dominated by n, using a dictionary.
-    '''
+    """
+    Calculate Bernstein polynomial
+    
+    Return the degree n Bernstein polynomial of the specified 
+     index i evaluated on t (B_i^n(t)),
+     with i dominated by n, using a dictionary.
+     
+    Parameters
+    ----------
+    n:
+        First parmeter of the Bernsten polynomial B_i^n(t)
+    i:
+        Second parameter of the Bernstein polynomial B_i^n(t)
+    t:
+        point where we want to calculate the value of the Bernstein polynomial
+    
+    Returns
+    -------
+    Value of the berstein polynomial of parameters n, i in the point t.
+    """
     num_points = t.shape[0]
     _t = 1 - t
     if i < 0 or i > n:
