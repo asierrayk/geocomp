@@ -72,10 +72,11 @@ def _direct(P, num_points):
 
 def _direct_aux(P, t):
     n = P.shape[0] - 1
-    bezier = 0
-    for i in range(n+1):
-        bezier += P[i] * comb(n,i) * t**i * (1-t)**(n-i)
-    return bezier
+    # bezier = 0
+    # for i in range(n+1):
+    #    bezier += P[i] * comb(n,i) * t**i * (1-t)**(n-i)
+    return sum(P[i]  * comb(n,i) * t**i * (1-t)**(n-i)
+        for i in range(n+1))# bezier
 
 def _recursive(P, num_points):
     return  np.array([_recursive_aux(P, t) for t in np.linspace(0,1,num_points)])
