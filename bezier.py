@@ -199,9 +199,20 @@ def subdivision(P):
 
 def backward_differences_bezier(P, m, h=None):
     """
-    Evaluate Bezier curve in the points...
-    evaluará la curva de Bézier en los puntos de la forma h*k para k=0,...,m
-    Se usará el método de diferencias "hacia atrás" explicado en clase
+    Calculate Bezier curve applying backward differences method.    
+    
+    Find the initial points of the Bezier curve given by conrol points 
+    in P.
+    Use the backward differences method, by first applying it forward
+    to get the n-th order differences of the previously calculated points
+    , and then applying it backwards to get the extended points
+    p_n+1,...,p_m
+    
+    Notes
+    -----
+    For further information, see Metdos de Bezier y B-splines section 3.6
+    by Prautzsch, Bohm, Paluszny.
+    
     Parameters
     ----------
     P :
