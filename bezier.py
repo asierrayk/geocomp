@@ -68,14 +68,9 @@ def _horner(P, t):
     return np.concatenate((bezier0, bezier1))
 
 def _direct(P, t):
-    return  np.array([_direct_aux(P, i) for i in t])
-
-def _direct_aux(P, t):
     n = P.shape[0] - 1
-    # bezier = 0
-    # for i in range(n+1):
-    #    bezier += P[i] * comb(n,i) * t**i * (1-t)**(n-i)
-    return sum(P[i]  * comb(n,i) * t**i * (1-t)**(n-i)
+    _t = 1-t
+    return sum(P[i]  * comb(n,i) * t[:,np.newaxis]**i * (_t[:,np.newaxis])**(n-i)
         for i in range(n+1))# bezier
 
 def _recursive(P,t):
