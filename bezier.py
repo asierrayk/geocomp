@@ -267,7 +267,7 @@ def subdivision(P):
     # we want the bezier polygon with 2n+1 points over [0, 0.5, 1]
     n, dim = P.shape
     n = n - 1
-    b = np.copy(P).astype("float")  # np.vstack((np.copy(P),np.zeros(dim)))
+    b = np.copy(P).astype("float")
     t = 0.5
 
     P0 = np.zeros((n + 1, dim))
