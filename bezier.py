@@ -151,7 +151,7 @@ def _direct(P, t):
     # b(t) = sum_i P(i) B(n,i,t)
     # B(n,i,t) = (n C i) t**i * (1-t)**(n-i)
     n = P.shape[0] - 1
-    # t = t[:, np.newaxis]#[1, 2, 3] => [[1], [2], [3]]
+    # t = t[:, np.newaxis] # [1, 2, 3] => [[1], [2], [3]]
     _t = 1 - t
     return sum(P[i] * comb(n, i) * t[:, np.newaxis]**i *
                (_t[:, np.newaxis])**(n - i) for i in range(n + 1))  # bezier
@@ -165,9 +165,9 @@ def _recursive(P, t):
     Parameters
     ----------
     P :
-        numpy.array P of dimension (n + 1, dim)
+        numpy.array of dimension (n + 1, dim)
     t :
-        numpy.array t of dimension (num_points)
+        numpy.array of dimension (num_points)
         Contains the points in which we want to evaluate the Bezier curve
     Returns
     -------
@@ -230,25 +230,20 @@ def bezier_subdivision(P, k, epsilon, lines=False):
 
     n = P.shape[0] - 1
 
-    # almost straight lines
+    # almost straight lines :
     diff2 = np.diff(P, n=2, axis=0)  # n-1 diffs
     max_diff2 = np.max(np.linalg.norm(diff2, axis=1))
     if lines and n * (n - 1) / 8 * max_diff2 < epsilon:
         return np.array([P[0], P[-1]])
 
-    # case 0
+    # case 0 :
     if k == 0 or max_diff2 < epsilon:
         return P
 
-    # subdivision
+    # subdivision :
     P0, P1 = subdivision(P)
-    R0 = bezier_subdivision(
-        P0,
-        k - 1,
-        epsilon,
-        lines)[
-        :-1,
-        :]  # all but the last one
+    R0 = bezier_subdivision(P0, k - 1, epsilon, lines)[:-1, :]
+    #   all but the last one
     R1 = bezier_subdivision(P1, k - 1, epsilon, lines)
     # concatenate results and return them
     return np.vstack((R0, R1))
