@@ -93,7 +93,8 @@ def _horner(P, t):
 
     Notes
     -----
-    For further information, see Bézier and B-Spline Techniques (Prautzsch, Hartmut, Boehm, Wolfgang, Paluszny, Marco)
+    For further information, see Bézier and B-Spline Techniques
+    (Prautzsch, Hartmut, Boehm, Wolfgang, Paluszny, Marco)
     section 2.3 (observation 4)
 
     Parameters
@@ -185,7 +186,8 @@ def bezier_subdivision(P, k, epsilon, lines=False):
 
     Notes
     -----
-    For further information, see Bézier and B-Spline Techniques (Prautzsch, Hartmut, Boehm, Wolfgang, Paluszny, Marco)
+    For further information, see Bézier and B-Spline Techniques
+    (Prautzsch, Hartmut, Boehm, Wolfgang, Paluszny, Marco)
     sections 3.3 - 3.5
     Parameters
     ----------
