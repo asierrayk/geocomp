@@ -47,7 +47,14 @@ class Point:
         pass
         #return (isinstance(other, Point))
         #        and self.y > other.y
-    
+        
+'''   
+def x(self):
+return self.x
+
+def y(self):
+return self.y
+'''
 
          
     

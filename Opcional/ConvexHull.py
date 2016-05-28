@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from Point import Point
+from point import Point
 
 class ConvexHull:
 
@@ -10,7 +10,7 @@ class ConvexHull:
             
         points.sort()
         n = len(points)
-        P = self.fromListToPoints(points, n)
+        P = self.fromListToPoints(points)
         #print 'puntos', P
         
         L_upper = P[:2] # first two elems
@@ -31,18 +31,36 @@ class ConvexHull:
 
         L_upper.pop()
         L_lower.pop()
-        return L_upper + L_lower
+        ch = L_upper + L_lower
+        self.xs = [e.x for e in ch]
+        self.ys = [e.y for e in ch]
+        
+        #ch = self.fromPointsToList(ch)
+        ch = zip(self.xs, self.ys)
+        return ch
+    
+    def graham_unzip(self, points):
+        self.graham(points)
+        return self.xs, self.ys
 
-    def fromListToPoints(self, p, n):
+    def fromListToPoints(self, p):
+        n = len(p)
         p2 = [Point(p[0][0], p[0][1])]
         for i in range(1, n):
             p2.append(Point(p[i][0], p[i][1]))
         return p2
 
+    def fromPointsToList(self, p):
+        p2 = [[p[0].x, p[0].y]]
+        n = len(p)
+        for i in range(1, n):
+            p2.append([p[i].x, p[i].y])
 
+
+'''       
 #         E X A M P L E
 
 C = ConvexHull()
 p = [[0, 0], [0, 1], [0, -1], [1, 0], [-1, 0]]
 r = C.graham(p)
-
+'''
