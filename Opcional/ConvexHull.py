@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import numpy as np
+
 from Point import Point
 
 class ConvexHull:
@@ -11,30 +11,27 @@ class ConvexHull:
         points.sort()
         n = len(points)
         P = self.fromListToPoints(points, n)
-        '''
-        P = np.asarray(Points)
-        n = P.shape[0]
-        P = np.sort(P, )
-        P = self.fromListToPoints(P, n)
-        '''
-
         #print 'puntos', P
         
-        L_upper = P[:2] # first two elem
+        L_upper = P[:2] # first two elems
         for i in xrange(2, n):
             last = P[i]
-            while len(L_upper) >= 2 and last.isLeft(P[-2], P[-1]):
+            while len(L_upper) >= 2 and last.isLeft(L_upper[-2], L_upper[-1]):
                 L_upper.pop()
             L_upper.append(last)
+        #print 'upper', L_upper
 
-        L_lower = P[-2:]
+        L_lower = [P[-1], P[-2]] # last 2 elems
         for i in range(n-3, -1, -1):
             last = P[i]
-            while len(L_lower) >= 2 and last.isLeft(P[-2], P[-1]):
+            while len(L_lower) >= 2 and last.isLeft(L_lower[-2], L_lower[-1]):
                 L_lower.pop()
             L_lower.append(last)
+        #print 'lower', L_lower
 
-        return L_upper.pop() + L_lower.pop()
+        L_upper.pop()
+        L_lower.pop()
+        return L_upper + L_lower
 
     def fromListToPoints(self, p, n):
         p2 = [Point(p[0][0], p[0][1])]
@@ -47,17 +44,5 @@ class ConvexHull:
 
 C = ConvexHull()
 p = [[0, 0], [0, 1], [0, -1], [1, 0], [-1, 0]]
-#r = C.graham(p)
-
-# .. paso a paso:
-
-p.sort()
-n = len(p)
-P = C.fromListToPoints(p, n)
-
-L_upper = P[:2]
-# i = 2
-last = P[2]
-b = last.isLeft(P[-2], P[-1]) # esto da false !
-
+r = C.graham(p)
 
