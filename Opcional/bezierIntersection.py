@@ -30,12 +30,6 @@ class BezierIntersection():
         x = max(A2[:,0])
         y = max(A2[:,1])
         max2 = Point(x, y)
-
-        print '................................'
-        print A1, ' :P1'
-        print '..minmax', min1, max1
-        print A2, ' :P2'
-        print '..minmax', min2, max2
         
         r1 = Rect(min1, max1)
         r2 = Rect(min2, max2)
@@ -50,11 +44,8 @@ class BezierIntersection():
             if m * (m - 1) * max_diff2_1 > eps:
                 # calculate bezier polygon subdivision 1
                 A11, A12 = subdivision(A1)
-                print '1 - m:', m, ' n:', n
-                print A11, A12
                 self.intersect(A11.tolist(), P2, eps)
                 self.intersect(A12.tolist(), P2, eps)
-                print '1 - fin'
                 
             else:
                 
@@ -64,36 +55,33 @@ class BezierIntersection():
                 if n * (n - 1) * max_diff2_2 > eps:
                     # calculate bezier polygon subdivision 2
                     A21, A22 = subdivision(A2)
-                    print '2 - m:', m, ' n:', n
-                    print A21, A22
                     self.intersect(P1, A21.tolist(), eps)
                     self.intersect(P1, A22.tolist(), eps)
-                    print '2 - fin'
+                    
                     
                 else: # (almost straight lines)
                     # intersectar los segmentos de recta P1 y P2
-                    print '--- LLEGAMOS ---'
                     s1 = Segment(Point(A1[0,0], A1[0,1]), 
                                  Point(A1[-1,0], A1[-1,1]))
                     s2 = Segment(Point(A2[0,0], A2[0,1]), 
                                  Point(A2[-1,0], A2[-1,1]))
                     point = s1.intersect(s2)
-                    print '(1)', A1[0], A1[-1], '(2)', A2[0], A2[-1], '>>', point
                     if point is not None:
                         self.intersPoints.append(point)
-        else:
-          print 'cortar rama'
+        
                             
     def getIntersPoints(self):
         return self.intersPoints
 
 if __name__ == '__main__':
+    # example:
+
     P1 = [[0,1], [0,0], [1,0]]
     P2 = [[0,0], [1,0], [1,1]]
     
     i = BezierIntersection()
     i.intersect(P1, P2, 0.1)
     p = i.getIntersPoints()
-    print 'inters::', p
+    #print 'inters:', p
     
     
