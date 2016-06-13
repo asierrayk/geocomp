@@ -8,16 +8,29 @@ class Rect(object):
             Lado izquierdo y derecho (coord x)
             Lado de arriba y abajo (coord y)
         """
-        self.l_izq   = min(p1.x, p2.x)
-        self.l_der  = max(p1.x, p2.x)
-        self.l_abaj = min(p1.y, p2.y)
-        self.l_arriba    = max(p1.y, p2.y)
+        self.left = min(p1.x, p2.x)
+        self.right = max(p1.x, p2.x)
+        
+        self.down = min(p1.y, p2.y)
+        self.up = max(p1.y, p2.y)
         
     def __intersects__(self, other):
-        intersec_horizon = (self.l_izq <= other.l_izq <= self.l_der) or \
-                           (self.l_izq <= other.l_der <= self.l_der)
-        intersec_vertic = (self.l_abaj <= other.l_abaj <= self.l_arriba) or \
-                           (self.l_abaj <= other.l_arriba <= self.l_arriba)
+        if self.left > other.right or self.right < other.left :
+            return False
+        if self.up < other.down or self.down > other.up :
+            return False
+       
+        return True
+        '''
+        intersec_horizon = (self.left <= other.left <= self.right) or \
+                           (self.left <= other.right <= self.right) or \
+                           (other.left <= self.left <= other.right) or \
+                           (other.left <= self.left <= other.right)
+                           
+        intersec_vertic = (self.down <= other.down <= self.up) or \
+                          (self.down <= other.up <= self.up) or \
+                          (other.down <= self.down <= other.up) or \
+                          (other.down <= self.up <= other.up)
         
         return intersec_horizon and intersec_vertic                   
-                         
+        '''                

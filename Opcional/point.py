@@ -39,6 +39,10 @@ class Point:
             return self.x*other[0] + self.y * other[1]
         else:
             return self.x*other.x + self.y*other.y
+            
+    def prodEsc(self, esc):
+        return Point(self.x*esc, self.y*esc)
+    
 
     def isLeft(self, a, b):
         return (b.x - a.x)*(self.y-a.y)-(self.x-a.x)*(b.y-a.y) >= 0
@@ -69,6 +73,8 @@ class Point:
             p2.append(Point(p[i][0], p[i][1]))
         return p2
 
+    def crossProduct3D(self, other):
+        return self.x*other.y - self.y*other.x
 '''
 def x(self):
 return self.x
