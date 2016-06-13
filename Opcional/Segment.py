@@ -51,17 +51,21 @@ class Segment:
             # Basta con que uno de los extremos de other esté entre los 
             #     extremos de self
             else:
-                return ((min(self.p0.x, self.p1.x) <= other.p0.x <= \
+                # return
+                if ((min(self.p0.x, self.p1.x) <= other.p0.x <= \
                     max(self.p0.x, self.p1.x)) and \
                     (min(self.p0.y, self.p1.y) <= other.p0.y <= \
-                    max(self.p0.y, self.p1.y))) or \
-                    ((min(self.p0.x, self.p1.x) <= other.p1.x <= \
+                    max(self.p0.y, self.p1.y))):
+                        return other.p0
+                else if ((min(self.p0.x, self.p1.x) <= other.p1.x <= \
                     max(self.p0.x, self.p1.x)) and \
                     (min(self.p0.y, self.p1.y) <= other.p1.y <= \
-                    max(self.p0.y, self.p1.y)))
+                    max(self.p0.y, self.p1.y))):
+                        return other.p1
                 
         else:
             x = np.linalg.solve(a, b)
         
-        return x[0] >= -1 and x[0] <= 1 and x[1] >= -1 and x[1] <= 1
+        # return x[0] >= -1 and x[0] <= 1 and x[1] >= -1 and x[1] <= 1
+        return Point(self.p0.x + x[0] * v1[0], self.p0.y + x[0] * v1[1])
             
