@@ -10,7 +10,6 @@ class ConvexHull:
     -------
     graham
     graham_unzip
-    fromListToPoints
 
     Atributes
     ---------
@@ -39,7 +38,7 @@ class ConvexHull:
 
         points.sort()
         n = len(points)
-        P = self.fromListToPoints(points)
+        P = Point.fromListToPoints(points)
         #print 'puntos', P
 
         L_upper = P[:2] # first 2 elems
@@ -82,24 +81,6 @@ class ConvexHull:
         self.graham(points)
         return self.xs, self.ys
 
-    def fromListToPoints(self, p):
-        '''
-        list of 2D points to list of class Point objects
-
-        Parameters
-        ----------
-        p :
-            list of 2D points
-
-        Return
-        ------
-        list of class Point objects
-        '''
-        n = len(p)
-        p2 = [Point(p[0][0], p[0][1])]
-        for i in range(1, n):
-            p2.append(Point(p[i][0], p[i][1]))
-        return p2
 
 
 
