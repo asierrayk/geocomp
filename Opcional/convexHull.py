@@ -3,17 +3,45 @@
 from point import Point
 
 class ConvexHull:
+    """
+    Class which ......... TODO
+
+    Methods
+    -------
+    graham
+    graham_unzip
+
+    Atributes
+    ---------
+    xs : first conponents of the convex hull calculated
+    ys : second conponents of the convex hull calculated
+
+    """
 
     def graham(self, points):
+        '''
+        Calculate the convex hull of a given set of points.
+        Graham's method used.
+
+
+        Parameters
+        ----------
+        points :
+            list of 2D points
+
+        Return
+        ------
+        list of points conforming the convex hull of the given points
+        '''
         if not isinstance(points, list):
             return
-            
+
         points.sort()
         n = len(points)
-        P = self.fromListToPoints(points)
+        P = Point.fromListToPoints(points)
         #print 'puntos', P
-        
-        L_upper = P[:2] # first two elems
+
+        L_upper = P[:2] # first 2 elems
         for i in xrange(2, n):
             last = P[i]
             while len(L_upper) >= 2 and last.isLeft(L_upper[-2], L_upper[-1]):
@@ -32,32 +60,32 @@ class ConvexHull:
         L_upper.pop()
         L_lower.pop()
         ch = L_upper + L_lower
+
+        # save atrib
         self.xs = [e.x for e in ch]
         self.ys = [e.y for e in ch]
-        
-        #ch = self.fromPointsToList(ch)
-        ch = zip(self.xs, self.ys)
+
+        #ch = zip(self.xs, self.ys)  # esta linea sobra??? parece que si
         return ch
-    
+
     def graham_unzip(self, points):
+        '''
+        Calculate convex hull of given points.
+        Return first and second components separately.
+
+        Return
+        ------
+        self.xs
+        self.ys
+        '''
         self.graham(points)
         return self.xs, self.ys
 
-    def fromListToPoints(self, p):
-        n = len(p)
-        p2 = [Point(p[0][0], p[0][1])]
-        for i in range(1, n):
-            p2.append(Point(p[i][0], p[i][1]))
-        return p2
-
-    def fromPointsToList(self, p):
-        p2 = [[p[0].x, p[0].y]]
-        n = len(p)
-        for i in range(1, n):
-            p2.append([p[i].x, p[i].y])
 
 
-'''       
+
+
+'''
 #         E X A M P L E
 
 C = ConvexHull()
