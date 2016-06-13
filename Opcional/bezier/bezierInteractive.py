@@ -10,7 +10,10 @@ class BezierInteractive():
         self.axes.set_ylim(-10, 10)
         self.touched_circle = None
         self.line = []
-        self.indice = 0
+        self.curve = []
+        self.ind_point = 0
+        self.ind_curve = 0
+        self.ind = 0
         self.polygon = []
         self.newCurve = True
         self.drag = False
@@ -38,10 +41,15 @@ class BezierInteractive():
             
         c = plt.Circle((event.xdata, event.ydata), radius=0.3, picker = True)
         #self.polygon = np.append(self.polygon, [[event.xdata, event.ydata]], axis=0)
-        self.polygon.append([event.xdata, event.ydata])
+        if self.newCurve:
+            self.polygon.append([[event.xdata, event.ydata]])
+        else:
+            self.polygon[self.ind].append([event.xdata, event.ydata])            
+        print "p", self.polygon
+        print "i", self.ind
         self.axes.add_artist(c)
-        self.drawPolygonal()
-        self.drawBezier()
+        self.drawPolygonal(self.ind)
+        self.drawBezier(self.ind)
             
         self.figure.canvas.draw()
         
@@ -54,19 +62,21 @@ class BezierInteractive():
             if not self.drag:
                 print "entra"
                 for i in xrange(len(self.polygon)):
-                    #print self.polygon[i] == list(self.touched_circle.center)
-                    #print "p", self.polygon[i]
-                    #print "c", self.touched_circle.center
-                    if self.polygon[i][0] == self.touched_circle.center[0] and self.polygon[i][1] == self.touched_circle.center[1]:
-                        #print "entra"
-                        self.indice = i
-                        #print "indice", self.indice
-                        self.drag = True
-            print self.indice
+                    for j in xrange(len(self.polygon[i])):
+                        #print self.polygon[i] == list(self.touched_circle.center)
+                        #print "p", self.polygon[i]
+                        #print "c", self.touched_circle.center
+                        if self.polygon[i][j] == list(self.touched_circle.center):
+                            #print "entra"
+                            self.ind_curve = i
+                            self.ind_point = j
+                            print "curva", self.ind_curve
+                            print "punto", self.ind_point                            
+                            self.drag = True
             self.touched_circle.center = self.x0 + dx, self.y0 + dy
-            self.polygon[self.indice] = [self.touched_circle.center[0], self.touched_circle.center[1]]
-            self.drawPolygonal()
-            self.drawBezier()          
+            self.polygon[self.ind_curve][self.ind_point] = list(self.touched_circle.center)
+            self.drawPolygonal(self.ind_curve)
+            self.drawBezier(self.ind_curve)          
             
             self.figure.canvas.draw()
         
@@ -86,28 +96,26 @@ class BezierInteractive():
         if event.key == ' ' :
             print ('you pressed space > new curve')
             self.ind = self.ind + 1
-            self.polygon[self.ind] = zip(*map(lambda x: x.center, self.axes.artists))
+            #self.polygon[self.ind] = zip(*map(lambda x: x.center, self.axes.artists))
             self.newCurve = True
     
-    def drawPolygonal(self):
+    def drawPolygonal(self, ind):
         if self.newCurve:
-            p = plt.Line2D(*zip(*self.polygon))
+            p = plt.Line2D(*zip(*(self.polygon[ind])))
             self.line.append(p)
-            self.axes.add_line(self.line[self.ind])
+            self.axes.add_line(self.line[ind])
         else:
-            self.line[self.ind].set_data(*zip(*self.polygon))
+            self.line[ind].set_data(*zip(*(self.polygon[ind])))
     
-    def drawBezier(self):    
+    def drawBezier(self, ind):    
         if self.newCurve:
-            self.curve = plt.Line2D(*zip(*map(lambda x: x.center, self.axes.artists)))
-            self.axes.add_line(self.curve)
+            c = plt.Line2D(*zip(*(self.polygon[ind])))
+            self.curve.append(c)
+            self.axes.add_line(self.curve[ind])
             self.newCurve = False
         else:
-            xs = np.asarray(map(lambda x: x.center[0], self.axes.artists))
-            ys = np.asarray(map(lambda x: x.center[1], self.axes.artists))
-            P = np.vstack((xs,ys)).T
-            points = ev(P, 100, 'horner')            
-            self.curve.set_data(points[:,0],points[:,1])
+            points = ev(np.asarray(self.polygon[ind]), 100, 'horner')            
+            self.curve[ind].set_data(points[:,0],points[:,1])
         
 if __name__ == '__main__':
     #%matplotlib qt
