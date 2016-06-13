@@ -43,6 +43,9 @@ class Point:
     def isLeft(self, a, b):
         return (b.x - a.x)*(self.y-a.y)-(self.x-a.x)*(b.y-a.y) >= 0
     
+    def to_array(self):
+        return [self.x, self.y]
+    
     def __higher__(self, other):
         pass
         #return (isinstance(other, Point))
