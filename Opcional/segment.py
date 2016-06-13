@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
-from Point import *
+from point import *
 import numpy as np
 
 class Segment:  
@@ -45,7 +45,7 @@ class Segment:
             dif1 = dif1.to_array()
             # Si ocurre esto son paralelos pero están a distinta altura
             if np.cross(v1, dif1) <> 0:
-                return false
+                return None
             # En caso contrario, si están ·-· x-x ó x-x ·-· no intersecan
             # si no sucede esto sí intersecan
             # Basta con que uno de los extremos de other esté entre los 
@@ -66,6 +66,8 @@ class Segment:
         else:
             x = np.linalg.solve(a, b)
         
-        # return x[0] >= -1 and x[0] <= 1 and x[1] >= -1 and x[1] <= 1
-        return Point(self.p0.x + x[0] * v1[0], self.p0.y + x[0] * v1[1])
+        if x[0] >= -1 and x[0] <= 1 and x[1] >= -1 and x[1] <= 1:
+            return Point(self.p0.x + x[0] * v1[0], self.p0.y + x[0] * v1[1])
+        else:
+            return None
             
