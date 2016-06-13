@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Point import *
+from point import *
 
 class Rect(object):
     def __init__(self, p1, p2):
