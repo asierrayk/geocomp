@@ -23,10 +23,10 @@ class Segment:
         
     def __intersects__(self, other):
         # v1 es el vector que va de p0 a p1
-        v1 = self.p1 - self.p0
+        v1 = (self.p1 - self.p0).to_array()
         
         # v2 es el vector que va de other.p0 a other.p1
-        v2 = other.p1 - other.p0
+        v2 = (other.p1 - other.p0).to_array()
         
         # Segmento_1 es el que va de puno_a a punto_b
         # el _2 va de punto_c a punto_d
@@ -35,12 +35,14 @@ class Segment:
         
         a = np.array([v1,v2])
         b = other.p1 - self.p0
+        b = b.to_array()
 
-        det = np.linalg.det(a)
+        det = a[0,0] * a [1,1] - a[1,0] * a[0,1]
         
         # En este caso ambos vectores son paralelos
         if det == 0:
             dif1 = self.p0 - other.p0
+            dif1 = dif1.to_array()
             # Si ocurre esto son paralelos pero están a distinta altura
             if np.cross(v1, dif1) <> 0:
                 return false
@@ -63,4 +65,3 @@ class Segment:
         
         return x[0] >= -1 and x[0] <= 1 and x[1] >= -1 and x[1] <= 1
             
-    
