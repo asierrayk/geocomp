@@ -34,6 +34,7 @@ class Segment:
         
         
         a = np.array([v1,v2])
+        a = a.T
         b = other.p1 - self.p0
         b2 = other.p0 - self.p0
         
@@ -69,10 +70,17 @@ class Segment:
         else:
             x1 = np.linalg.solve(a, b)
             x2 = np.linalg.solve(a, b2)
-        
-        if 0 <= x1[0] <= 1 and -1 <= x[1] <= 1 and\
+        '''
+        print self.p0, self.p1, v1
+        print 'otro', other.p0, other.p1, v2
+        print 'solucion mu para p4', x1[0]
+        print 'solucion lambda para p4', x1[1]
+        print 'solucion mu para p3', x2[0]
+        print 'solucion lambda para p3', x2[1]
+        '''
+        if 0 <= x1[0] <= 1 and -1 <= x1[1] <= 1 and\
            -1 <= x2[1] <= 1:
-            return Point(self.p0.x + x[0] * v1[0], self.p0.y + x[0] * v1[1])
+            return Point(self.p0.x + x1[0] * v1[0], self.p0.y + x1[0] * v1[1])
         else:
             return None
             
