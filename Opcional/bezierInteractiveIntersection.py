@@ -24,9 +24,9 @@ class BezierInteractive():
         self.cid_pick = self.figure.canvas.mpl_connect('pick_event', self.pick_event)
         self.key_cid = self.figure.canvas.mpl_connect('key_press_event', self.on_key)
         self.colors = ['b','g','c','m','y','k']
-        self.ind = 0
         self.I = BezierIntersection()
         self.inters = []
+        self.inters_points = []
         
     def click_event(self, event):
         if event.button == 2:
@@ -63,11 +63,8 @@ class BezierInteractive():
                 for i in xrange(len(self.polygon)):
                     for j in xrange(len(self.polygon[i])):
                         if self.polygon[i][j] == list(self.touched_circle.center):
-                            #print "entra"
                             self.ind_curve = i
                             self.ind_point = j
-                            print "curva", self.ind_curve
-                            print "punto", self.ind_point                            
                             self.drag = True
             self.touched_circle.center = self.x0 + dx, self.y0 + dy
             self.polygon[self.ind_curve][self.ind_point] = list(self.touched_circle.center)
@@ -116,15 +113,14 @@ class BezierInteractive():
     def drawIntersections(self):
         if self.ind < 1:
             return
-        #print "antes", self.inters
         self.cleanIntersections()
-        #print "despues", self.inters
-        #print "p0", self.polygon[0]
-        #print "p1", self.polygon[1]
-        self.I.intersect(self.polygon[0],self.polygon[1], 0.1)
-        points = self.I.getIntersPoints()
-        print "p", points
-        for p in points:
+        for i in xrange(self.ind):
+            for j in xrange(i+1, self.ind+1):
+                self.I.reset()
+                self.I.intersect(self.polygon[i],self.polygon[j], 0.1)
+                points = self.I.getIntersPoints()
+                self.inters_points = self.inters_points + points
+        for p in self.inters_points:
             c = plt.Circle((p.x, p.y), radius=0.2, color = 'r')
             self.inters.append(c)
             self.axes.add_artist(c)
@@ -133,8 +129,8 @@ class BezierInteractive():
     def cleanIntersections(self):
         for i in self.inters:
             i.remove()
-            print "borrado"
         self.inters = []
+        self.inters_points = []
         
 if __name__ == '__main__':
     #%matplotlib qt
