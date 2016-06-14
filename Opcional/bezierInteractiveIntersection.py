@@ -27,7 +27,7 @@ class BezierInteractive():
         self.I = BezierIntersection()
         self.inters = []
         self.inters_points = []
-        
+
     def click_event(self, event):
         if event.button == 2:
             self.figure.canvas.mpl_disconnect(self.cid_press)
@@ -35,23 +35,23 @@ class BezierInteractive():
             self.figure.canvas.mpl_disconnect(self.cid_move)
             plt.close(self.figure)
             return
-        
+
         if event.button == 3:
             return
-        
+
         self.initial_event = event
-            
+
         c = plt.Circle((event.xdata, event.ydata), radius=0.3, color = self.colors[self.ind % len(self.colors)], picker = True)
         if self.newCurve:
             self.polygon.append([[event.xdata, event.ydata]])
         else:
             self.polygon[self.ind].append([event.xdata, event.ydata])
-            
+
         self.axes.add_artist(c)
         self.drawPolygonal(self.ind)
         self.drawBezier(self.ind)
         self.drawIntersections()
-        
+
     def motion_event(self, event):
         if self.touched_circle == None:
             return
@@ -69,13 +69,13 @@ class BezierInteractive():
             self.touched_circle.center = self.x0 + dx, self.y0 + dy
             self.polygon[self.ind_curve][self.ind_point] = list(self.touched_circle.center)
             self.drawPolygonal(self.ind_curve)
-            self.drawBezier(self.ind_curve)          
+            self.drawBezier(self.ind_curve)
             self.drawIntersections()
-        
+
     def release_event(self, event):
         self.touched_circle = None
         self.drag = False
-        
+
     def pick_event(self, event):
         self.initial_event = event.mouseevent
         if event.mouseevent.button != 3:
@@ -83,13 +83,13 @@ class BezierInteractive():
         self.touched_circle = event.artist
         self.x0 = event.mouseevent.xdata
         self.y0 = event.mouseevent.ydata
-        
+
     def on_key(self, event):
         if event.key == ' ' :
             print ('you pressed space > new curve')
             self.ind = self.ind + 1
             self.newCurve = True
-    
+
     def drawPolygonal(self, ind):
         if self.newCurve:
             p = plt.Line2D(*zip(*(self.polygon[ind])), color = '0.25')
@@ -98,18 +98,18 @@ class BezierInteractive():
         else:
             self.line[ind].set_data(*zip(*(self.polygon[ind])))
         self.figure.canvas.draw()
-    
-    def drawBezier(self, ind):    
+
+    def drawBezier(self, ind):
         if self.newCurve:
             c = plt.Line2D(*zip(*(self.polygon[ind])), color = self.colors[self.ind % len(self.colors)])
             self.curve.append(c)
             self.axes.add_line(self.curve[ind])
             self.newCurve = False
         else:
-            points = ev(np.asarray(self.polygon[ind]), 100, 'horner')            
+            points = ev(np.asarray(self.polygon[ind]), 100, 'horner')
             self.curve[ind].set_data(points[:,0],points[:,1])
         self.figure.canvas.draw()
-            
+
     def drawIntersections(self):
         if self.ind < 1:
             return
@@ -125,13 +125,14 @@ class BezierInteractive():
             self.inters.append(c)
             self.axes.add_artist(c)
         self.figure.canvas.draw()
-    
+
     def cleanIntersections(self):
         for i in self.inters:
             i.remove()
         self.inters = []
         self.inters_points = []
-        
+
 if __name__ == '__main__':
     #%matplotlib qt
     b = BezierInteractive()
+    plt.show()
