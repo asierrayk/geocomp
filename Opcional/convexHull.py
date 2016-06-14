@@ -4,7 +4,7 @@ from point import Point
 
 class ConvexHull:
     """
-    Class which ......... TODO
+    Class which calculates the convex hull of a list of given points
 
     Methods
     -------
@@ -13,8 +13,8 @@ class ConvexHull:
 
     Atributes
     ---------
-    xs : first conponents of the convex hull calculated
-    ys : second conponents of the convex hull calculated
+    xs : first components of the convex hull calculated
+    ys : second components of the convex hull calculated
 
     """
 
@@ -80,8 +80,6 @@ class ConvexHull:
         '''
         self.graham(points)
         return self.xs, self.ys
-
-
 
 
 

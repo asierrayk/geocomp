@@ -4,6 +4,28 @@ from functools import total_ordering
 
 @total_ordering
 class Point:
+    """
+    Class which calculates the intersection points of two bezier curves
+
+    Methods
+    -------
+    __repr__
+    __eq__
+    __lt__
+    __add__
+    __sub__
+    __mul__
+    prodEsc
+    isLeft
+    to_array
+    fromListToPoints
+    crossProduct3D
+
+
+    Atributes
+    ---------
+    intersPoints : list of intersection points
+    """
     def __init__(self,x,y):
         self.x = x
         self.y = y
@@ -39,25 +61,35 @@ class Point:
             return self.x*other[0] + self.y * other[1]
         else:
             return self.x*other.x + self.y*other.y
-            
+
     def prodEsc(self, esc):
+        '''Product by escalar'''
         return Point(self.x*esc, self.y*esc)
-    
+
 
     def isLeft(self, a, b):
+        '''
+        check is the point is to the left of the vector ab.
+        first compute the perpendicular to the left of ab=(x, y), ie, (-y, x)
+        then compute dot product <(-y,x), (a self)>
+        if the projection is positive self is to the left of ab
+        '''
         return (b.x - a.x)*(self.y-a.y)-(self.x-a.x)*(b.y-a.y) >= 0
 
     def to_array(self):
+        '''
+        get the list [x, y] with the  components of the Point object
+
+        Return
+        ------
+        list
+        '''
         return [self.x, self.y]
 
-    def __higher__(self, other):
-        pass
-        #return (isinstance(other, Point))
-        #        and self.y > other.y
     @staticmethod
     def fromListToPoints(p):
         '''
-        list of 2D points to list of class Point objects
+        transform a list of 2D points into a list of Point objects
 
         Parameters
         ----------
@@ -74,6 +106,10 @@ class Point:
         return p2
 
     def crossProduct3D(self, other):
+        '''
+        calculate the 3D cross product.
+        
+        '''
         return self.x*other.y - self.y*other.x
 '''
 def x(self):
