@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 from bezier import polyeval_bezier as ev
 import numpy as np
+from bezierIntersection import BezierIntersection
 
 class BezierInteractive():
     def __init__(self):
@@ -24,8 +25,9 @@ class BezierInteractive():
         self.key_cid = self.figure.canvas.mpl_connect('key_press_event', self.on_key)
         self.colors = ['b','g','c','m','y','k']
         self.ind = 0
+        self.I = BezierIntersection()
+        self.inters = []
         
-    
     def click_event(self, event):
         if event.button == 2:
             self.figure.canvas.mpl_disconnect(self.cid_press)
@@ -40,7 +42,6 @@ class BezierInteractive():
         self.initial_event = event
             
         c = plt.Circle((event.xdata, event.ydata), radius=0.3, color = self.colors[self.ind % len(self.colors)], picker = True)
-        #self.polygon = np.append(self.polygon, [[event.xdata, event.ydata]], axis=0)
         if self.newCurve:
             self.polygon.append([[event.xdata, event.ydata]])
         else:
@@ -49,8 +50,7 @@ class BezierInteractive():
         self.axes.add_artist(c)
         self.drawPolygonal(self.ind)
         self.drawBezier(self.ind)
-            
-        self.figure.canvas.draw()
+        self.drawIntersections()
         
     def motion_event(self, event):
         if self.touched_circle == None:
@@ -62,9 +62,6 @@ class BezierInteractive():
                 print "entra"
                 for i in xrange(len(self.polygon)):
                     for j in xrange(len(self.polygon[i])):
-                        #print self.polygon[i] == list(self.touched_circle.center)
-                        #print "p", self.polygon[i]
-                        #print "c", self.touched_circle.center
                         if self.polygon[i][j] == list(self.touched_circle.center):
                             #print "entra"
                             self.ind_curve = i
@@ -76,8 +73,7 @@ class BezierInteractive():
             self.polygon[self.ind_curve][self.ind_point] = list(self.touched_circle.center)
             self.drawPolygonal(self.ind_curve)
             self.drawBezier(self.ind_curve)          
-            
-            self.figure.canvas.draw()
+            self.drawIntersections()
         
     def release_event(self, event):
         self.touched_circle = None
@@ -95,7 +91,6 @@ class BezierInteractive():
         if event.key == ' ' :
             print ('you pressed space > new curve')
             self.ind = self.ind + 1
-            #self.polygon[self.ind] = zip(*map(lambda x: x.center, self.axes.artists))
             self.newCurve = True
     
     def drawPolygonal(self, ind):
@@ -105,6 +100,7 @@ class BezierInteractive():
             self.axes.add_line(self.line[ind])
         else:
             self.line[ind].set_data(*zip(*(self.polygon[ind])))
+        self.figure.canvas.draw()
     
     def drawBezier(self, ind):    
         if self.newCurve:
@@ -115,6 +111,30 @@ class BezierInteractive():
         else:
             points = ev(np.asarray(self.polygon[ind]), 100, 'horner')            
             self.curve[ind].set_data(points[:,0],points[:,1])
+        self.figure.canvas.draw()
+            
+    def drawIntersections(self):
+        if self.ind < 1:
+            return
+        #print "antes", self.inters
+        self.cleanIntersections()
+        #print "despues", self.inters
+        #print "p0", self.polygon[0]
+        #print "p1", self.polygon[1]
+        self.I.intersect(self.polygon[0],self.polygon[1], 0.1)
+        points = self.I.getIntersPoints()
+        print "p", points
+        for p in points:
+            c = plt.Circle((p.x, p.y), radius=0.2, color = 'r')
+            self.inters.append(c)
+            self.axes.add_artist(c)
+        self.figure.canvas.draw()
+    
+    def cleanIntersections(self):
+        for i in self.inters:
+            i.remove()
+            print "borrado"
+        self.inters = []
         
 if __name__ == '__main__':
     #%matplotlib qt
